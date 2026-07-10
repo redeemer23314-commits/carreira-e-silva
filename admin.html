@@ -45,6 +45,16 @@
     .msg.err { background:#FBECEC; color:#A02020; border:1px solid #F0C8C8; }
     .msg.info { background:#EAEDF4; color:var(--navy); border:1px solid #D5DAE6; }
 
+    /* Layout com barra lateral */
+    .layout { display:flex; gap:22px; align-items:flex-start; }
+    .sidebar { width:210px; flex-shrink:0; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px; position:sticky; top:24px; display:flex; flex-direction:column; gap:6px; }
+    .side-item { display:flex; align-items:center; gap:11px; width:100%; text-align:left; justify-content:flex-start; background:transparent; color:var(--ink); border:none; padding:12px 14px; border-radius:9px; font-family:var(--font-display); font-size:.95rem; }
+    .side-item:hover { background:var(--ground); }
+    .side-item.active { background:var(--navy); color:#fff; }
+    .side-item svg { flex-shrink:0; }
+    .content { flex:1; min-width:0; }
+    .view[hidden] { display:none; }
+
     /* Stat cards */
     .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px; }
     .stat { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; display:flex; align-items:center; gap:14px; }
@@ -88,6 +98,11 @@
     @media (max-width:760px) {
       .stats { grid-template-columns:1fr 1fr; }
     }
+    @media (max-width:720px) {
+      .layout { flex-direction:column; }
+      .sidebar { width:100%; flex-direction:row; position:static; top:auto; }
+      .side-item { justify-content:center; }
+    }
     @media (max-width:460px) {
       .stats { grid-template-columns:1fr; }
     }
@@ -117,32 +132,53 @@
     </div>
 
     <div id="painel" style="display:none;">
-      <!-- Estatísticas -->
-      <div class="stats" id="stats"></div>
+      <div class="layout">
 
-      <!-- Gráfico -->
-      <div class="panel" id="chartPanel" style="display:none;">
-        <h2 class="panel__title">Pedidos por dia</h2>
-        <p class="panel__hint">Últimos 14 dias</p>
-        <div class="chart" id="chart"></div>
-      </div>
+        <!-- Barra lateral -->
+        <aside class="sidebar">
+          <button class="side-item active" data-view="dashboard" onclick="mudarVista('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            Dashboard
+          </button>
+          <button class="side-item" data-view="formularios" onclick="mudarVista('formularios')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
+            Formulários
+          </button>
+        </aside>
 
-      <!-- Barra de ferramentas -->
-      <div class="toolbar" id="toolbar" style="display:none;">
-        <div class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" id="busca" placeholder="Procurar por nome, email, localidade..." oninput="render()">
+        <!-- Conteúdo -->
+        <div class="content">
+
+          <!-- Vista: Dashboard -->
+          <section id="view-dashboard" class="view">
+            <div class="stats" id="stats"></div>
+            <div class="panel" id="chartPanel" style="display:none;">
+              <h2 class="panel__title">Pedidos por dia</h2>
+              <p class="panel__hint">Últimos 14 dias</p>
+              <div class="chart" id="chart"></div>
+            </div>
+          </section>
+
+          <!-- Vista: Formulários -->
+          <section id="view-formularios" class="view" hidden>
+            <div class="toolbar" id="toolbar" style="display:none;">
+              <div class="search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" id="busca" placeholder="Procurar por nome, email, localidade..." oninput="render()">
+              </div>
+              <select id="filtroTipo" onchange="render()"><option value="">Todos os tipos</option></select>
+              <select id="ordenar" onchange="render()">
+                <option value="recente">Mais recentes</option>
+                <option value="antigo">Mais antigos</option>
+                <option value="nome">Nome (A–Z)</option>
+              </select>
+            </div>
+            <div class="count" id="count"></div>
+            <div id="lista"></div>
+          </section>
+
         </div>
-        <select id="filtroTipo" onchange="render()"><option value="">Todos os tipos</option></select>
-        <select id="ordenar" onchange="render()">
-          <option value="recente">Mais recentes</option>
-          <option value="antigo">Mais antigos</option>
-          <option value="nome">Nome (A–Z)</option>
-        </select>
       </div>
-
-      <div class="count" id="count"></div>
-      <div id="lista"></div>
     </div>
   </main>
 
@@ -155,6 +191,11 @@
     function entrar(){ const t=document.getElementById("token").value.trim(); if(!t)return; localStorage.setItem("cs_admin_token",t); mostrarPainel(); carregar(); }
     function sair(){ localStorage.removeItem("cs_admin_token"); location.reload(); }
     function mostrarPainel(){ document.getElementById("gate").style.display="none"; document.getElementById("painel").style.display="block"; document.getElementById("topActions").style.display="flex"; }
+
+    function mudarVista(v){
+      document.querySelectorAll(".view").forEach(s=>{ s.hidden = (s.id!=="view-"+v); });
+      document.querySelectorAll(".side-item").forEach(b=>{ b.classList.toggle("active", b.dataset.view===v); });
+    }
 
     async function carregar(){
       const token=localStorage.getItem("cs_admin_token");
