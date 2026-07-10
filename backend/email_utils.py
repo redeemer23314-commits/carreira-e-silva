@@ -19,6 +19,21 @@ import smtplib
 import ssl
 from email.message import EmailMessage
 
+import socket
+
+
+# --- Forçar IPv4 (fix Render: "[Errno 101] Network is unreachable") ---
+_getaddrinfo_original = socket.getaddrinfo
+
+
+def _apenas_ipv4(*args, **kwargs):
+    respostas = _getaddrinfo_original(*args, **kwargs)
+    ipv4 = [r for r in respostas if r[0] == socket.AF_INET]
+    return ipv4 or respostas
+
+
+socket.getaddrinfo = _apenas_ipv4
+
 # Email de teste pedido pelo utilizador (mudar depois para o email da empresa).
 EMAIL_TESTE = "redeemer23314@gmail.com"
 
