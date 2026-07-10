@@ -7,9 +7,10 @@ echo   Atualizar site no GitHub - Carreira ^& Silva
 echo ============================================
 echo.
 
-REM Verifica se ha alteracoes
-git diff --quiet && git diff --cached --quiet
-if %errorlevel%==0 (
+REM Verifica se ha alteracoes (inclui ficheiros novos/nao rastreados)
+set "temmudancas="
+for /f "delims=" %%i in ('git status --porcelain') do set "temmudancas=1"
+if not defined temmudancas (
   echo Nao ha nada de novo para enviar. Esta tudo atualizado.
   echo.
   pause
