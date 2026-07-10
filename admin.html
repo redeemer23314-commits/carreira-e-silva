@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Pedidos de Orcamento</title>
+  <style>
+    :root { --navy:#17203A; --red:#C83232; --ground:#F4F5F7; --surface:#FFF; --border:#E2E5EA; --muted:#5C6478; --ink:#17203A; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--ground); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+    header { background:var(--navy); color:#fff; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+    header h1 { font-size:1.1rem; margin:0; font-weight:700; }
+    .actions { display:flex; gap:8px; }
+    button { font:inherit; font-weight:600; cursor:pointer; border-radius:8px; border:1px solid transparent; padding:9px 16px; }
+    .btn-primary { background:var(--red); color:#fff; }
+    .btn-ghost { background:transparent; color:#fff; border-color:rgba(255,255,255,.4); }
+    main { max-width:1000px; margin:0 auto; padding:24px; }
+    .gate { max-width:420px; margin:60px auto; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:32px; }
+    .gate h2 { margin:0 0 8px; }
+    .gate p { color:var(--muted); margin:0 0 20px; font-size:.92rem; }
+    label { display:block; font-weight:600; margin-bottom:6px; font-size:.9rem; }
+    input[type=password] { width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:8px; font:inherit; margin-bottom:16px; }
+    .gate button { width:100%; }
+    .bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
+    .count { font-size:.95rem; color:var(--muted); }
+    .count strong { color:var(--ink); font-size:1.3rem; }
+    .msg { padding:14px 18px; border-radius:10px; margin:12px 0; font-weight:500; }
+    .msg.err { background:#FBECEC; color:#A02020; border:1px solid #F0C8C8; }
+    .msg.info { background:#EAEDF4; color:var(--navy); border:1px solid #D5DAE6; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin-bottom:14px; }
+    .card-head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:10px; }
+    .card-head h3 { margin:0; font-size:1.1rem; }
+    .card-head .data { color:var(--muted); font-size:.82rem; white-space:nowrap; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px 20px; }
+    .field { font-size:.9rem; }
+    .field .k { color:var(--muted); font-size:.74rem; text-transform:uppercase; letter-spacing:.04em; display:block; }
+    .msg-box { grid-column:1/-1; background:var(--ground); border-radius:8px; padding:10px 12px; margin-top:6px; white-space:pre-wrap; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Carreira &amp; Silva &middot; Pedidos de Orcamento</h1>
+    <div class="actions" id="topActions" style="display:none;">
+      <button class="btn-ghost" onclick="carregar()">Atualizar</button>
+      <button class="btn-ghost" onclick="sair()">Sair</button>
+    </div>
+  </header>
+  <main>
+    <div class="gate" id="gate">
+      <h2>Area reservada</h2>
+      <p>Introduz a palavra-passe de administrador para ver os pedidos recebidos.</p>
+      <label for="token">Palavra-passe (ADMIN_TOKEN)</label>
+      <input type="password" id="token" placeholder="..." onkeydown="if(event.key==='Enter')entrar()">
+      <button class="btn-primary" onclick="entrar()">Entrar</button>
+    </div>
+    <div id="painel" style="display:none;">
+      <div class="bar"><span class="count"><strong id="total">0</strong> pedidos</span></div>
+      <div id="lista"></div>
+    </div>
+  </main>
+  <script>
+    const API_BASE = (location.hostname==="localhost"||location.hostname==="127.0.0.1")
+      ? "http://localhost:5000" : "https://carreira-e-silva.onrender.com";
+    function entrar(){ const t=document.getElementById("token").value.trim(); if(!t)return; localStorage.setItem("cs_admin_token",t); mostrarPainel(); carregar(); }
+    function sair(){ localStorage.removeItem("cs_admin_token"); location.reload(); }
+    function mostrarPainel(){ document.getElementById("gate").style.display="none"; document.getElementById("painel").style.display="block"; document.getElementById("topActions").style.display="flex"; }
+    async function carregar(){
+      const token=localStorage.getItem("cs_admin_token"); const lista=document.getElementById("lista");
+      lista.innerHTML='<div class="msg info">A carregar pedidos...</div>';
+      try{
+        const resp=await fetch(API_BASE+"/api/orcamentos",{headers:{"X-Admin-Token":token}});
+        if(resp.status===401||resp.status===403){ lista.innerHTML='<div class="msg err">Palavra-passe incorreta. Clica em "Sair" e tenta de novo.</div>'; document.getElementById("total").textContent="0"; return; }
+        if(!resp.ok) throw new Error("Erro "+resp.status);
+        const pedidos=await resp.json(); document.getElementById("total").textContent=pedidos.length;
+        if(pedidos.length===0){ lista.innerHTML='<div class="msg info">Ainda nao ha pedidos.</div>'; return; }
+        lista.innerHTML=pedidos.map(cartao).join("");
+      }catch(e){ lista.innerHTML='<div class="msg err">Nao foi possivel ligar a API. Ela pode estar a "acordar" (~50s) - tenta Atualizar daqui a pouco.</div>'; }
+    }
+    function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+    function campo(k,v){ if(!v)return""; return '<div class="field"><span class="k">'+k+'</span><span>'+esc(v)+"</span></div>"; }
+    function cartao(p){
+      let data=""; if(p.criado_em){ data=new Date(p.criado_em).toLocaleString("pt-PT"); }
+      return '<div class="card"><div class="card-head"><h3>'+esc(p.nome)+'</h3><span class="data">'+data+" &middot; #"+p.id+"</span></div><div class=\"grid\">"+
+        campo("Email",p.email)+campo("Telefone",p.telefone)+campo("Codigo postal",p.codigo_postal)+campo("Tipo",p.tipo)+
+        campo("Origem",p.origem)+campo("Destino",p.destino)+campo("Andar origem",p.andar_origem)+campo("Andar destino",p.andar_destino)+
+        campo("Elevador origem",p.elevador_origem)+campo("Elevador destino",p.elevador_destino)+campo("Itens especiais",p.especial)+
+        campo("Servicos",p.servico)+campo("Data preferencial",p.data)+campo("Flexibilidade",p.flexibilidade)+
+        (p.itens?'<div class="field msg-box"><span class="k">Itens a transportar</span>'+esc(p.itens)+"</div>":"")+
+        (p.observacoes?'<div class="field msg-box"><span class="k">Mensagem</span>'+esc(p.observacoes)+"</div>":"")+"</div></div>";
+    }
+    if(localStorage.getItem("cs_admin_token")){ mostrarPainel(); carregar(); }
+  </script>
+</body>
+</html>
