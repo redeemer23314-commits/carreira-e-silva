@@ -17,7 +17,7 @@
 const API_URL =
   location.hostname === "localhost" || location.hostname === "127.0.0.1"
     ? "http://localhost:5000/api/orcamento"
-    : "https://SUBSTITUIR-pela-tua-api.onrender.com/api/orcamento";
+    : "https://carreira-e-silva.onrender.com/api/orcamento";
 
 const COOLDOWN_SEGUNDOS = 30;
 
