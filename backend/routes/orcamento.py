@@ -1,0 +1,108 @@
+"""
+Rotas da API de orçamentos.
+
+  POST /api/orcamento    -> recebe o formulário, valida, filtra, guarda e avisa por email.
+  GET  /api/orcamentos   -> lista os pedidos (ADMIN — protegido por token).
+"""
+
+import os
+
+from flask import Blueprint, jsonify, request
+
+from database import Session
+from email_utils import enviar_notificacao
+from extensions import limiter
+from filtro import limpar_texto, validar_conteudo
+from models import PedidoOrcamento
+
+bp = Blueprint("orcamento", __name__)
+
+# Campos que TÊM de vir preenchidos (iguais aos 'required' do formulário).
+CAMPOS_OBRIGATORIOS = ["nome", "email", "telefone", "codigo_postal", "tipo", "observacoes"]
+
+# Campos de texto livre onde aplicamos o filtro de conteúdo.
+CAMPOS_A_FILTRAR = ["itens", "observacoes", "origem", "destino"]
+
+
+@bp.route("/api/orcamento", methods=["POST"])
+@limiter.limit("5 per minute")  # no máximo 5 envios por minuto por IP
+def criar_orcamento():
+    dados = request.get_json(silent=True) or {}
+
+    # 1) Campos obrigatórios
+    for campo in CAMPOS_OBRIGATORIOS:
+        if not str(dados.get(campo, "")).strip():
+            return jsonify({"error": f"O campo '{campo}' é obrigatório."}), 400
+
+    # 2) Email minimamente válido
+    if "@" not in str(dados.get("email", "")):
+        return jsonify({"error": "Email inválido."}), 400
+
+    # 3) Filtro de conteúdo (palavrões, spam, injeção de código)
+    ok, motivo = validar_conteudo(*(dados.get(c, "") for c in CAMPOS_A_FILTRAR))
+    if not ok:
+        return jsonify({"error": motivo}), 400
+
+    # 4) Checkboxes vêm como lista -> guardamos como texto "a, b, c"
+    especial = dados.get("especial", "")
+    if isinstance(especial, list):
+        especial = ", ".join(especial)
+    servico = dados.get("servico", "")
+    if isinstance(servico, list):
+        servico = ", ".join(servico)
+
+    # 5) Criar o pedido (limpar_texto neutraliza HTML/scripts antes de guardar)
+    pedido = PedidoOrcamento(
+        nome=limpar_texto(dados.get("nome")),
+        email=limpar_texto(dados.get("email")),
+        telefone=limpar_texto(dados.get("telefone")),
+        codigo_postal=limpar_texto(dados.get("codigo_postal")),
+        tipo=limpar_texto(dados.get("tipo")),
+        origem=limpar_texto(dados.get("origem")),
+        destino=limpar_texto(dados.get("destino")),
+        andar_origem=limpar_texto(dados.get("andar_origem")),
+        andar_destino=limpar_texto(dados.get("andar_destino")),
+        elevador_origem=limpar_texto(dados.get("elevador_origem")),
+        elevador_destino=limpar_texto(dados.get("elevador_destino")),
+        itens=limpar_texto(dados.get("itens")),
+        especial=limpar_texto(especial),
+        servico=limpar_texto(servico),
+        data=limpar_texto(dados.get("data")),
+        flexibilidade=limpar_texto(dados.get("flexibilidade")),
+        observacoes=limpar_texto(dados.get("observacoes")),
+    )
+
+    # 6) Guardar na base de dados
+    db = Session()
+    try:
+        db.add(pedido)
+        db.commit()
+        pedido_dict = pedido.to_dict()
+    except Exception as erro:
+        db.rollback()
+        print("[db] Erro ao guardar:", erro)
+        return jsonify({"error": "Não foi possível guardar o pedido. Tente novamente."}), 500
+    finally:
+        db.close()
+
+    # 7) Avisar a empresa por email (se falhar, o pedido já está guardado na mesma)
+    enviar_notificacao(pedido_dict)
+
+    return jsonify({"mensagem": "Pedido recebido com sucesso! Entraremos em contacto."}), 201
+
+
+@bp.route("/api/orcamentos", methods=["GET"])
+def listar_orcamentos():
+    """Lista todos os pedidos. Protegido: exige o cabeçalho X-Admin-Token."""
+    token_correto = os.environ.get("ADMIN_TOKEN")
+    if not token_correto:
+        return jsonify({"error": "Listagem desativada (ADMIN_TOKEN não configurado)."}), 403
+    if request.headers.get("X-Admin-Token") != token_correto:
+        return jsonify({"error": "Não autorizado."}), 401
+
+    db = Session()
+    try:
+        pedidos = db.query(PedidoOrcamento).order_by(PedidoOrcamento.criado_em.desc()).all()
+        return jsonify([p.to_dict() for p in pedidos])
+    finally:
+        db.close()
