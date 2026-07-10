@@ -46,13 +46,13 @@
     .msg.info { background:#EAEDF4; color:var(--navy); border:1px solid #D5DAE6; }
 
     /* Layout com barra lateral */
-    .layout { display:flex; gap:22px; align-items:flex-start; }
-    .sidebar { width:210px; flex-shrink:0; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px; position:sticky; top:24px; display:flex; flex-direction:column; gap:6px; }
-    .side-item { display:flex; align-items:center; gap:11px; width:100%; text-align:left; justify-content:flex-start; background:transparent; color:var(--ink); border:none; padding:12px 14px; border-radius:9px; font-family:var(--font-display); font-size:.95rem; }
-    .side-item:hover { background:var(--ground); }
-    .side-item.active { background:var(--navy); color:#fff; }
+    .layout { display:flex; align-items:stretch; min-height:calc(100vh - 68px); }
+    .sidebar { width:230px; flex-shrink:0; background:var(--navy); color:#fff; padding:20px 12px; display:flex; flex-direction:column; gap:4px; }
+    .side-item { display:flex; align-items:center; gap:12px; width:100%; text-align:left; justify-content:flex-start; background:transparent; color:rgba(255,255,255,.72); border:none; border-left:3px solid transparent; padding:13px 15px; border-radius:0 8px 8px 0; font-family:var(--font-display); font-size:.98rem; }
+    .side-item:hover { background:rgba(255,255,255,.08); color:#fff; }
+    .side-item.active { background:rgba(255,255,255,.12); color:#fff; border-left-color:var(--red); font-weight:700; }
     .side-item svg { flex-shrink:0; }
-    .content { flex:1; min-width:0; }
+    .content { flex:1; min-width:0; padding:26px 32px; max-width:1180px; }
     .view[hidden] { display:none; }
 
     /* Stat cards */
@@ -99,9 +99,10 @@
       .stats { grid-template-columns:1fr 1fr; }
     }
     @media (max-width:720px) {
-      .layout { flex-direction:column; }
-      .sidebar { width:100%; flex-direction:row; position:static; top:auto; }
-      .side-item { justify-content:center; }
+      .layout { flex-direction:column; min-height:0; }
+      .sidebar { width:100%; flex-direction:row; }
+      .side-item { justify-content:center; border-left:none; border-radius:8px; }
+      .content { padding:20px; }
     }
     @media (max-width:460px) {
       .stats { grid-template-columns:1fr; }
@@ -122,7 +123,7 @@
       <button class="btn-ghost" onclick="sair()">Sair</button>
     </div>
   </header>
-  <main>
+  <main id="gateWrap">
     <div class="gate" id="gate">
       <h2>Área reservada</h2>
       <p>Introduz a palavra-passe de administrador para veres os pedidos recebidos.</p>
@@ -130,9 +131,10 @@
       <input type="password" id="token" placeholder="..." onkeydown="if(event.key==='Enter')entrar()">
       <button class="btn-primary" onclick="entrar()">Entrar</button>
     </div>
+  </main>
 
-    <div id="painel" style="display:none;">
-      <div class="layout">
+  <div id="painel" style="display:none;">
+    <div class="layout">
 
         <!-- Barra lateral -->
         <aside class="sidebar">
@@ -180,7 +182,6 @@
         </div>
       </div>
     </div>
-  </main>
 
   <script>
     const API_BASE = (location.hostname==="localhost"||location.hostname==="127.0.0.1")
@@ -190,7 +191,7 @@
 
     function entrar(){ const t=document.getElementById("token").value.trim(); if(!t)return; localStorage.setItem("cs_admin_token",t); mostrarPainel(); carregar(); }
     function sair(){ localStorage.removeItem("cs_admin_token"); location.reload(); }
-    function mostrarPainel(){ document.getElementById("gate").style.display="none"; document.getElementById("painel").style.display="block"; document.getElementById("topActions").style.display="flex"; }
+    function mostrarPainel(){ document.getElementById("gateWrap").style.display="none"; document.getElementById("painel").style.display="block"; document.getElementById("topActions").style.display="flex"; }
 
     function mudarVista(v){
       document.querySelectorAll(".view").forEach(s=>{ s.hidden = (s.id!=="view-"+v); });
