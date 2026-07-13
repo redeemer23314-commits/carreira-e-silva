@@ -585,6 +585,24 @@ h1, h2, h3, h4 {
   color: var(--color-accent);
 }
 
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.footer-social__label {
+  color: #fff;
+  font-weight: 600;
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.footer-social svg {
+  flex-shrink: 0;
+}
+
 .footer-bottom {
   padding: 20px 0;
   font-size: 0.82rem;
