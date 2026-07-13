@@ -116,6 +116,16 @@
     .badge { display:inline-block; font-family:var(--font-display); font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:999px; margin-left:8px; vertical-align:middle; background:#eaf0f8; color:var(--navy); }
     .badge--intl { background:var(--red-soft); color:var(--red); }
     .card-head .data { color:var(--muted); font-size:.82rem; white-space:nowrap; }
+    .card--done { opacity:.68; }
+    .badge--done { background:#e4f5ea; color:#1a7f4b; }
+    .card-actions { display:flex; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid var(--border); }
+    .mini-btn { font-size:.82rem; padding:8px 14px; border-radius:8px; border:1px solid var(--border); background:#fff; cursor:pointer; font-family:var(--font-display); font-weight:600; }
+    .mini-btn--done { color:#1a7f4b; border-color:#bfe3cd; }
+    .mini-btn--done:hover { background:#e4f5ea; }
+    .mini-btn--undo { color:var(--muted); }
+    .mini-btn--undo:hover { background:var(--ground); }
+    .mini-btn--del { color:var(--red); border-color:#f0c8c8; margin-left:auto; }
+    .mini-btn--del:hover { background:var(--red-soft); }
     .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px 20px; }
     .field { font-size:.9rem; }
     .field .k { color:var(--muted); font-size:.74rem; text-transform:uppercase; letter-spacing:.04em; display:block; }
@@ -416,13 +426,48 @@
     function cartao(p){
       let data=""; if(p.criado_em){ data=new Date(p.criado_em).toLocaleString("pt-PT"); }
       const badge = p.tipo ? '<span class="badge'+(ehIntl(p)?' badge--intl':'')+'">'+esc(p.tipo)+'</span>' : '';
-      return '<div class="card"><div class="card-head"><h3>'+esc(p.nome)+badge+'</h3><span class="data">'+data+" &middot; #"+p.id+"</span></div><div class=\"grid\">"+
+      const doneBadge = p.realizado ? '<span class="badge badge--done">✓ Realizado</span>' : '';
+      const acoes = '<div class="card-actions">'+
+        '<button class="mini-btn '+(p.realizado?'mini-btn--undo':'mini-btn--done')+'" onclick="marcarRealizado('+p.id+','+(p.realizado?'false':'true')+')">'+(p.realizado?'Marcar como pendente':'Marcar como realizado')+'</button>'+
+        '<button class="mini-btn mini-btn--del" onclick="apagarPedido('+p.id+')">Apagar</button>'+
+        '</div>';
+      return '<div class="card'+(p.realizado?' card--done':'')+'"><div class="card-head"><h3>'+esc(p.nome)+badge+doneBadge+'</h3><span class="data">'+data+" &middot; #"+p.id+"</span></div><div class=\"grid\">"+
         campo("Email",p.email)+campo("Telefone",p.telefone)+campo("Código postal",p.codigo_postal)+
         campo("Origem",p.origem)+campo("Destino",p.destino)+campo("Andar origem",p.andar_origem)+campo("Andar destino",p.andar_destino)+
         campo("Elevador origem",p.elevador_origem)+campo("Elevador destino",p.elevador_destino)+campo("Itens especiais",p.especial)+
         campo("Serviços",p.servico)+campo("Data preferencial",p.data)+campo("Flexibilidade",p.flexibilidade)+
         (p.itens?'<div class="field msg-box"><span class="k">Itens a transportar</span>'+esc(p.itens)+"</div>":"")+
-        (p.observacoes?'<div class="field msg-box"><span class="k">Mensagem</span>'+esc(p.observacoes)+"</div>":"")+"</div></div>";
+        (p.observacoes?'<div class="field msg-box"><span class="k">Mensagem</span>'+esc(p.observacoes)+"</div>":"")+"</div>"+acoes+"</div>";
+    }
+
+    async function marcarRealizado(id, valor){
+      const token=localStorage.getItem("cs_admin_token");
+      try{
+        const resp=await fetch(API_BASE+"/api/orcamentos/"+id,{
+          method:"PATCH",
+          headers:{"Content-Type":"application/json","X-Admin-Token":token},
+          body:JSON.stringify({realizado:valor})
+        });
+        if(!resp.ok) throw new Error();
+        const atualizado=await resp.json();
+        const i=TODOS.findIndex(x=>x.id===id);
+        if(i>=0) TODOS[i]=atualizado;
+        render();
+      }catch(e){ alert("Não foi possível atualizar o pedido. Tenta de novo."); }
+    }
+
+    async function apagarPedido(id){
+      if(!confirm("Apagar este pedido definitivamente? Esta ação não pode ser desfeita.")) return;
+      const token=localStorage.getItem("cs_admin_token");
+      try{
+        const resp=await fetch(API_BASE+"/api/orcamentos/"+id,{
+          method:"DELETE",
+          headers:{"X-Admin-Token":token}
+        });
+        if(!resp.ok) throw new Error();
+        TODOS=TODOS.filter(x=>x.id!==id);
+        render();
+      }catch(e){ alert("Não foi possível apagar o pedido. Tenta de novo."); }
     }
 
     if(localStorage.getItem("cs_admin_token")){ mostrarPainel(); carregar(); }

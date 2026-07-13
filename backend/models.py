@@ -8,7 +8,7 @@ por vírgulas (ex: "piano, cofre").
 
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
 
 from database import Base
 
@@ -47,6 +47,9 @@ class PedidoOrcamento(Base):
     # Mensagem livre
     observacoes = Column(Text)
 
+    # Estado de gestão (marcado pelo admin)
+    realizado = Column(Boolean, default=False)
+
     # Preenchido automaticamente
     criado_em = Column(DateTime, default=datetime.utcnow)
 
@@ -71,5 +74,6 @@ class PedidoOrcamento(Base):
             "data": self.data,
             "flexibilidade": self.flexibilidade,
             "observacoes": self.observacoes,
+            "realizado": bool(self.realizado),
             "criado_em": self.criado_em.isoformat() if self.criado_em else None,
         }

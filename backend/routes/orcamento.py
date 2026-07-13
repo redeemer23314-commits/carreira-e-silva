@@ -91,18 +91,66 @@ def criar_orcamento():
     return jsonify({"mensagem": "Pedido recebido com sucesso! Entraremos em contacto."}), 201
 
 
+def _verificar_admin():
+    """Devolve uma resposta de erro se o token de admin não for válido; senão None."""
+    token_correto = os.environ.get("ADMIN_TOKEN")
+    if not token_correto:
+        return jsonify({"error": "Área de admin desativada (ADMIN_TOKEN não configurado)."}), 403
+    if request.headers.get("X-Admin-Token") != token_correto:
+        return jsonify({"error": "Não autorizado."}), 401
+    return None
+
+
 @bp.route("/api/orcamentos", methods=["GET"])
 def listar_orcamentos():
     """Lista todos os pedidos. Protegido: exige o cabeçalho X-Admin-Token."""
-    token_correto = os.environ.get("ADMIN_TOKEN")
-    if not token_correto:
-        return jsonify({"error": "Listagem desativada (ADMIN_TOKEN não configurado)."}), 403
-    if request.headers.get("X-Admin-Token") != token_correto:
-        return jsonify({"error": "Não autorizado."}), 401
+    erro = _verificar_admin()
+    if erro:
+        return erro
 
     db = Session()
     try:
         pedidos = db.query(PedidoOrcamento).order_by(PedidoOrcamento.criado_em.desc()).all()
         return jsonify([p.to_dict() for p in pedidos])
+    finally:
+        db.close()
+
+
+@bp.route("/api/orcamentos/<int:pedido_id>", methods=["PATCH"])
+def atualizar_orcamento(pedido_id):
+    """Atualiza o estado de um pedido (ex.: marcar como realizado). Protegido."""
+    erro = _verificar_admin()
+    if erro:
+        return erro
+
+    dados = request.get_json(silent=True) or {}
+    db = Session()
+    try:
+        pedido = db.get(PedidoOrcamento, pedido_id)
+        if not pedido:
+            return jsonify({"error": "Pedido não encontrado."}), 404
+        if "realizado" in dados:
+            pedido.realizado = bool(dados["realizado"])
+        db.commit()
+        return jsonify(pedido.to_dict())
+    finally:
+        db.close()
+
+
+@bp.route("/api/orcamentos/<int:pedido_id>", methods=["DELETE"])
+def apagar_orcamento(pedido_id):
+    """Apaga um pedido definitivamente. Protegido."""
+    erro = _verificar_admin()
+    if erro:
+        return erro
+
+    db = Session()
+    try:
+        pedido = db.get(PedidoOrcamento, pedido_id)
+        if not pedido:
+            return jsonify({"error": "Pedido não encontrado."}), 404
+        db.delete(pedido)
+        db.commit()
+        return jsonify({"mensagem": "Pedido apagado."})
     finally:
         db.close()

@@ -8,7 +8,7 @@ de ambiente DATABASE_URL (o Render oferece um Postgres grátis).
 
 import os
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Se não houver DATABASE_URL definida, usamos um ficheiro SQLite local.
@@ -37,4 +37,18 @@ def init_db():
     import models  # noqa: F401
 
     Base.metadata.create_all(engine)
+
+    # Migração leve: se a tabela já existia sem a coluna 'realizado', adiciona-a.
+    # (o create_all acima não altera tabelas já existentes)
+    insp = inspect(engine)
+    if insp.has_table("pedidos_orcamento"):
+        colunas = [c["name"] for c in insp.get_columns("pedidos_orcamento")]
+        if "realizado" not in colunas:
+            padrao = "false" if engine.dialect.name == "postgresql" else "0"
+            with engine.begin() as conn:
+                conn.execute(text(
+                    f"ALTER TABLE pedidos_orcamento ADD COLUMN realizado BOOLEAN DEFAULT {padrao}"
+                ))
+            print("[db] Coluna 'realizado' adicionada.")
+
     print("[db] Tabelas prontas.")

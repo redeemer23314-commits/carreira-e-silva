@@ -3,7 +3,8 @@
     "allow": [
       "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\subbit1\\\\Desktop\\\\CS\\\\img\")",
       "mcp__visualize__show_widget",
-      "Bash(cd \"C:/Users/João Calisto\" && ls -lt Downloads/*.jpg Downloads/*.jpeg Downloads/*.png Downloads/*.webp 2>/dev/null | head -25)"
+      "Bash(cd \"C:/Users/João Calisto\" && ls -lt Downloads/*.jpg Downloads/*.jpeg Downloads/*.png Downloads/*.webp 2>/dev/null | head -25)",
+      "Bash(python -m py_compile models.py database.py routes/orcamento.py)"
     ]
   }
 }
