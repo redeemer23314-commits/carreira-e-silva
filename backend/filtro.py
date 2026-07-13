@@ -39,12 +39,28 @@ PALAVRAS_BLOQUEADAS = {
 }
 
 # Padrões de injeção de código / tentativas de ataque.
+#
+# NOTA: a proteção real contra SQL injection é o ORM (SQLAlchemy usa queries
+# parametrizadas, por isso o texto nunca é executado como SQL). Estes padrões
+# são apenas uma camada extra que rejeita tentativas óbvias logo à entrada.
+# São propositadamente específicos para não bloquear mensagens legítimas.
 PADROES_PERIGOSOS = [
-    r"<\s*script",          # <script>
-    r"javascript\s*:",      # javascript:
-    r"on\w+\s*=",           # onerror=, onclick=, ...
-    r"<\s*iframe",          # <iframe>
-    r"(union\s+select|drop\s+table|insert\s+into|delete\s+from)",  # SQL injection
+    # XSS / injeção de HTML e scripts
+    r"<\s*script",              # <script>
+    r"javascript\s*:",          # javascript:
+    r"on\w+\s*=",               # onerror=, onclick=, ...
+    r"<\s*iframe",              # <iframe>
+    # SQL injection — assinaturas claramente maliciosas
+    r"\bunion\b\s+(all\s+)?\bselect\b",              # UNION SELECT / UNION ALL SELECT
+    r"\bdrop\s+table\b",                             # DROP TABLE
+    r"\binsert\s+into\b",                            # INSERT INTO
+    r"\bdelete\s+from\b",                            # DELETE FROM
+    r";\s*(drop|delete|update|insert|alter|truncate)\b",  # ; DROP ...  (encadear comandos)
+    r"\binformation_schema\b",                       # ler a estrutura da BD
+    r"\bxp_cmdshell\b",                              # executar comandos (SQL Server)
+    r"\b(sleep|pg_sleep|benchmark)\s*\(",            # ataques baseados em tempo
+    r"\binto\s+(out|dump)file\b",                    # exportar ficheiros
+    r"('|\")\s*or\s+('|\")?\s*\d+\s*('|\")?\s*=\s*('|\")?\s*\d+",  # ' OR 1=1
 ]
 
 # Limites anti-spam
