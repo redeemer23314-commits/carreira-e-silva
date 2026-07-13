@@ -20,13 +20,22 @@ from html import escape
 # ---------------------------------------------------------------------------
 PALAVRAS_BLOQUEADAS = {
     # Português
-    "merda", "caralho", "foda", "fode", "foder", "puta", "puto", "cabrao",
-    "cabra", "corno", "otario", "paneleiro", "burro", "idiota", "estupido",
-    "imbecil", "cona", "piroca", "broche", "badalhoco",
-    # Inglês (spam/insultos comuns)
-    "fuck", "shit", "bitch", "asshole", "dick", "cunt", "bastard",
+    "merda", "caralho", "foda", "fode", "foder", "fodido", "fodida", "puta",
+    "puto", "cabrao", "cabra", "corno", "otario", "paneleiro", "burro",
+    "idiota", "estupido", "imbecil", "cona", "piroca", "broche", "badalhoco",
+    "pariu", "fdp",
+    # Inglês — palavrões e insultos
+    "fuck", "fucks", "fucked", "fucking", "fuckin", "fucker", "fuckers",
+    "motherfucker", "motherfucking", "shit", "shitty", "shithead", "bullshit",
+    "bitch", "bitches", "asshole", "assholes", "arsehole", "ass", "arse",
+    "dick", "dickhead", "prick", "cock", "cocksucker", "cunt", "twat",
+    "pussy", "bastard", "whore", "slut", "wanker", "wank", "bollocks",
+    "bugger", "douchebag", "dumbass", "jackass", "moron", "damn", "goddamn",
+    # Inglês — insultos discriminatórios (bloqueio importante)
+    "nigger", "nigga", "faggot", "retard", "retarded",
     # Termos típicos de spam
-    "viagra", "casino", "bitcoin", "crypto", "loan", "porn", "xxx",
+    "viagra", "cialis", "casino", "bitcoin", "crypto", "loan", "porn",
+    "porno", "xxx", "gambling", "jackpot", "lottery", "pharmacy", "pills",
 }
 
 # Padrões de injeção de código / tentativas de ataque.
@@ -42,6 +51,17 @@ PADROES_PERIGOSOS = [
 MAX_LINKS = 3          # nº máximo de links permitidos numa mensagem
 MAX_CARACTERES = 3000  # tamanho máximo por campo de texto
 
+# Substituições "leet" comuns para disfarçar palavras (m3rda, c@ralho, $hit...).
+LEET = {
+    "0": "o", "1": "i", "3": "e", "4": "a",
+    "5": "s", "7": "t", "@": "a", "$": "s",
+}
+
+# Separadores que as pessoas metem ENTRE letras para enganar o filtro
+# (espaços, pontos, hífens, etc.). Não inclui letras nem dígitos — por isso
+# o padrão nunca "salta" de uma palavra para a seguinte.
+_SEP = r"[\s._\-*+~|/\\]*"
+
 
 def _normalizar(texto: str) -> str:
     """Minúsculas e sem acentos, para comparar palavras de forma fiável."""
@@ -49,6 +69,27 @@ def _normalizar(texto: str) -> str:
     texto = unicodedata.normalize("NFKD", texto)
     texto = "".join(c for c in texto if not unicodedata.combining(c))
     return texto
+
+
+def _descodificar(texto: str) -> str:
+    """Minúsculas, sem acentos e com o 'leet' desfeito (m3rda -> merda)."""
+    texto = _normalizar(texto)
+    return "".join(LEET.get(c, c) for c in texto)
+
+
+def _padrao_palavra(palavra: str) -> "re.Pattern":
+    """
+    Constrói um padrão tolerante a disfarces para uma palavra bloqueada:
+      - cada letra pode repetir-se           -> fuuuck
+      - pode haver separadores entre letras  -> f.u.c.k  /  f u c k
+      - tem de ser uma palavra isolada       -> NÃO apanha 'puta' dentro de 'computador'
+    """
+    nucleo = _SEP.join(re.escape(c) + "+" for c in palavra)
+    return re.compile(r"(?<![a-z0-9])" + nucleo + r"(?![a-z0-9])")
+
+
+# Pré-compila os padrões uma só vez (as palavras já estão normalizadas).
+_PADROES_BLOQUEADAS = [_padrao_palavra(_descodificar(p)) for p in PALAVRAS_BLOQUEADAS]
 
 
 def limpar_texto(texto) -> str:
@@ -90,10 +131,11 @@ def validar_conteudo(*textos) -> tuple[bool, str]:
         if len(links) > MAX_LINKS:
             return False, "A mensagem parece spam (demasiados links)."
 
-        # 4) Palavrões / linguagem imprópria
-        normalizado = _normalizar(texto)
-        palavras = re.findall(r"[a-z]+", normalizado)
-        if PALAVRAS_BLOQUEADAS.intersection(palavras):
-            return False, "A mensagem contém linguagem imprópria."
+        # 4) Palavrões / linguagem imprópria (resistente a disfarces:
+        #    leet, letras repetidas e separadores entre letras)
+        desofuscado = _descodificar(texto)
+        for padrao in _PADROES_BLOQUEADAS:
+            if padrao.search(desofuscado):
+                return False, "A mensagem contém linguagem imprópria."
 
     return True, ""
