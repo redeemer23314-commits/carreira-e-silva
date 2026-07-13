@@ -256,6 +256,34 @@ h1, h2, h3, h4 {
   margin-left: 20px;
 }
 
+/* Seletor de idioma PT | EN */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 20px;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.lang-switch a,
+.lang-switch span {
+  padding: 4px 7px;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  transition: color 0.15s, background 0.15s;
+}
+.lang-switch a:hover {
+  color: var(--color-navy);
+  background: var(--color-bg-alt);
+}
+.lang-switch .is-active {
+  color: var(--color-navy);
+  border: 1.5px solid var(--color-border);
+}
+
 /* Botão hamburger (mobile) */
 .nav-toggle {
   display: none;

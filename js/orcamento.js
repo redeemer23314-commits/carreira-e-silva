@@ -21,6 +21,25 @@ const API_URL =
 
 const COOLDOWN_SEGUNDOS = 30;
 
+// Mensagens em PT/EN — escolhidas pelo idioma da página (<html lang="...">).
+const LANG = (document.documentElement.lang || "pt").toLowerCase().startsWith("en") ? "en" : "pt";
+const MSG = {
+  pt: {
+    enviando: "A enviar pedido...",
+    sucesso: "Pedido enviado com sucesso!",
+    falha: "Não foi possível enviar. Tente novamente.",
+    ligacao: "Erro de ligação ao servidor. Tente novamente dentro de momentos.",
+    aguarde: (s) => `Aguarde ${s}s...`,
+  },
+  en: {
+    enviando: "Sending request...",
+    sucesso: "Request sent successfully!",
+    falha: "Could not send. Please try again.",
+    ligacao: "Server connection error. Please try again shortly.",
+    aguarde: (s) => `Please wait ${s}s...`,
+  },
+}[LANG];
+
 // ---------------------------------------------------------------------------
 let emCooldown = false;
 
@@ -53,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     botao.disabled = true;
     status.style.color = "inherit";
-    status.textContent = "A enviar pedido...";
+    status.textContent = MSG.enviando;
 
     try {
       const resposta = await fetch(API_URL, {
@@ -66,17 +85,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (resposta.ok) {
         status.style.color = "#1a7f37";
-        status.textContent = "✅ " + (json.mensagem || "Pedido enviado com sucesso!");
+        status.textContent = "✅ " + (LANG === "en" ? MSG.sucesso : (json.mensagem || MSG.sucesso));
         form.reset();
         iniciarCooldown(botao, textoBotao);
       } else {
         status.style.color = "#c0392b";
-        status.textContent = "⚠️ " + (json.error || "Não foi possível enviar. Tente novamente.");
+        status.textContent = "⚠️ " + (json.error || MSG.falha);
         botao.disabled = false;
       }
     } catch (erro) {
       status.style.color = "#c0392b";
-      status.textContent = "⚠️ Erro de ligação ao servidor. Tente novamente dentro de momentos.";
+      status.textContent = "⚠️ " + MSG.ligacao;
       botao.disabled = false;
     }
   });
@@ -117,7 +136,7 @@ function iniciarCooldown(botao, textoOriginal) {
   emCooldown = true;
   let restante = COOLDOWN_SEGUNDOS;
   botao.disabled = true;
-  botao.textContent = `Aguarde ${restante}s...`;
+  botao.textContent = MSG.aguarde(restante);
 
   const cronometro = setInterval(() => {
     restante--;
@@ -127,7 +146,7 @@ function iniciarCooldown(botao, textoOriginal) {
       botao.disabled = false;
       botao.textContent = textoOriginal;
     } else {
-      botao.textContent = `Aguarde ${restante}s...`;
+      botao.textContent = MSG.aguarde(restante);
     }
   }, 1000);
 }

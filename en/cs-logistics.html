@@ -1,92 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CS Logistics & Management | Carreira & Silva</title>
-  <meta name="description" content="CS Logistics & Management — logística e serviço 3PL para empresas. Gestão de stock, armazenamento e entrega de encomendas.">
+  <meta name="description" content="CS Logistics & Management — logistics and 3PL service for businesses. Stock management, storage and order delivery.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
   <style>
-    .b2b-badge {
-      display: inline-block;
-      background: rgba(80, 64, 160, 0.5);
-      color: #e0d9ff;
-      font-family: var(--font-display);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 5px 14px;
-      border-radius: 999px;
-      margin-bottom: 14px;
-    }
-    .tpl-explainer {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 56px;
-      align-items: center;
-    }
-    .tpl-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-    .tpl-step {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      padding: 20px 0;
-      border-bottom: 1px solid var(--color-border);
-    }
+    .b2b-badge { display: inline-block; background: rgba(80, 64, 160, 0.5); color: #e0d9ff; font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 14px; border-radius: 999px; margin-bottom: 14px; }
+    .tpl-explainer { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+    .tpl-steps { display: flex; flex-direction: column; gap: 0; }
+    .tpl-step { display: flex; gap: 16px; align-items: flex-start; padding: 20px 0; border-bottom: 1px solid var(--color-border); }
     .tpl-step:last-child { border-bottom: none; }
-    .tpl-step-num {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--color-navy);
-      color: #fff;
-      font-family: var(--font-display);
-      font-size: 0.9rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
+    .tpl-step-num { width: 36px; height: 36px; border-radius: 50%; background: var(--color-navy); color: #fff; font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .tpl-step h4 { font-size: 1rem; margin-bottom: 4px; }
     .tpl-step p { font-size: 0.88rem; color: var(--color-text-muted); }
-    .tpl-card {
-      background: var(--color-navy);
-      border-radius: var(--radius);
-      padding: 36px 32px;
-      color: #fff;
-    }
+    .tpl-card { background: var(--color-navy); border-radius: var(--radius); padding: 36px 32px; color: #fff; }
     .tpl-card h3 { color: #fff; font-size: 1.5rem; margin-bottom: 12px; }
     .tpl-card p { color: rgba(255,255,255,0.8); font-size: 0.92rem; line-height: 1.7; margin-bottom: 14px; }
-    .tpl-card .highlight {
-      background: rgba(200,50,50,0.2);
-      border-left: 3px solid var(--color-accent);
-      border-radius: 0 6px 6px 0;
-      padding: 12px 16px;
-      font-size: 0.88rem;
-      color: rgba(255,255,255,0.9);
-      margin-top: 20px;
-    }
-    .who-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    .who-card {
-      background: #fff;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius);
-      padding: 24px 20px;
-      text-align: center;
-    }
+    .tpl-card .highlight { background: rgba(200,50,50,0.2); border-left: 3px solid var(--color-accent); border-radius: 0 6px 6px 0; padding: 12px 16px; font-size: 0.88rem; color: rgba(255,255,255,0.9); margin-top: 20px; }
+    .who-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .who-card { background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius); padding: 24px 20px; text-align: center; }
     .who-icon { font-size: 2rem; margin-bottom: 12px; }
     .who-card h3 { font-size: 1rem; margin-bottom: 6px; }
     .who-card p { font-size: 0.88rem; color: var(--color-text-muted); }
@@ -101,43 +38,43 @@
   <header class="site-header">
     <div class="container header-inner">
       <a href="index.html" class="logo">
-        <img src="img/image_Nero_AI_Image_Upscaler_Photo_Face-removebg-preview.png" class="logo-img" alt="" aria-hidden="true" width="44" height="44">
+        <img src="../img/image_Nero_AI_Image_Upscaler_Photo_Face-removebg-preview.png" class="logo-img" alt="" aria-hidden="true" width="44" height="44">
         <span class="logo-text">Carreira<span class="logo-silva"> &amp; Silva</span></span>
       </a>
-      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
       <nav class="main-nav" id="mainNav">
         <ul>
-          <li><a href="index.html">Início</a></li>
-          <li><a href="cs-moving.html"><img src="img/Captura de ecrã 2026-06-24 173014.png" class="nav-division-icon" alt="">CS Moving</a></li>
-          <li><a href="cs-storage.html"><img src="img/Captura de ecrã 2026-06-24 173001.png" class="nav-division-icon" alt="">CS Storage</a></li>
-          <li><a href="cs-logistics.html" class="active"><img src="img/Captura de ecrã 2026-06-24 173027.png" class="nav-division-icon" alt="">CS Logistics</a></li>
-          <li><a href="loja.html">Materiais de Embalamento</a></li>
-          <li><a href="contactos.html">Contactos</a></li>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="cs-moving.html"><img src="../img/Captura de ecrã 2026-06-24 173014.png" class="nav-division-icon" alt="">CS Moving</a></li>
+          <li><a href="cs-storage.html"><img src="../img/Captura de ecrã 2026-06-24 173001.png" class="nav-division-icon" alt="">CS Storage</a></li>
+          <li><a href="cs-logistics.html" class="active"><img src="../img/Captura de ecrã 2026-06-24 173027.png" class="nav-division-icon" alt="">CS Logistics</a></li>
+          <li><a href="loja.html">Packing Materials</a></li>
+          <li><a href="contactos.html">Contact</a></li>
         </ul>
       </nav>
       <div class="lang-switch">
-        <span class="is-active">PT</span>
-        <a href="en/cs-logistics.html">EN</a>
+        <a href="../cs-logistics.html">PT</a>
+        <span class="is-active">EN</span>
       </div>
     </div>
   </header>
 
   <main>
 
-    <section class="hero" style="background: linear-gradient(rgba(11,31,58,0.72), rgba(11,31,58,0.72)), url('img/Imagem WhatsApp 2025-06-17 às 11.56.35_b44cd516.webp') center/cover no-repeat;">
+    <section class="hero" style="background: linear-gradient(rgba(11,31,58,0.72), rgba(11,31,58,0.72)), url('../img/Imagem WhatsApp 2025-06-17 às 11.56.35_b44cd516.webp') center/cover no-repeat;">
       <div class="container hero-inner">
         <div class="hero-content">
           <span class="b2b-badge">CS Logistics &amp; Management</span>
-          <h1>Logística para o seu negócio. Sem complicações.</h1>
+          <h1>Logistics for your business. Hassle-free.</h1>
           <p class="hero-lead">
-            Tratamos do stock da sua empresa — armazenamos, gerimos e entregamos as encomendas
-            ao seu cliente final. Para que se foque no que importa.
+            We handle your company's stock — we store, manage and deliver orders
+            to your end customer. So you can focus on what matters.
           </p>
           <div class="hero-actions">
-            <a href="contactos.html" class="btn btn-primary">Falar com a equipa</a>
-            <a href="#3pl" class="btn btn-outline">O que é o 3PL?</a>
+            <a href="contactos.html" class="btn btn-primary">Talk to the team</a>
+            <a href="#3pl" class="btn btn-outline">What is 3PL?</a>
           </div>
         </div>
       </div>
@@ -147,8 +84,8 @@
       <div class="container">
         <div class="section-heading">
           <p class="eyebrow">CS Logistics</p>
-          <h2>Os nossos serviços para empresas</h2>
-          <p class="section-lead">Soluções logísticas completas para empresas de qualquer dimensão.</p>
+          <h2>Our services for businesses</h2>
+          <p class="section-lead">Complete logistics solutions for businesses of any size.</p>
         </div>
         <div class="services-grid">
           <article class="service-card">
@@ -157,8 +94,8 @@
                 <path d="M4 21V9l8-6 8 6v12M9 21v-6h6v6"/><path d="M4 9h16"/>
               </svg>
             </div>
-            <h3>Armazenamento de stock</h3>
-            <p>Guardamos o stock da sua empresa no nosso armazém, organizado e catalogado para fácil acesso e gestão.</p>
+            <h3>Stock storage</h3>
+            <p>We store your company's stock in our warehouse, organised and catalogued for easy access and management.</p>
           </article>
           <article class="service-card">
             <div class="service-icon">
@@ -166,8 +103,8 @@
                 <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
               </svg>
             </div>
-            <h3>Gestão de inventário</h3>
-            <p>Controlo rigoroso de entradas e saídas, com relatórios de stock atualizados para a sua empresa.</p>
+            <h3>Inventory management</h3>
+            <p>Strict control of inbound and outbound, with up-to-date stock reports for your company.</p>
           </article>
           <article class="service-card">
             <div class="service-icon">
@@ -176,8 +113,8 @@
                 <circle cx="7.5" cy="18" r="1.2"/><circle cx="16.5" cy="18" r="1.2"/>
               </svg>
             </div>
-            <h3>Entrega de encomendas</h3>
-            <p>Tratamos da expedição e entrega das encomendas ao cliente final, integrando com o seu processo de venda.</p>
+            <h3>Order delivery</h3>
+            <p>We handle dispatch and delivery of orders to the end customer, integrating with your sales process.</p>
           </article>
           <article class="service-card">
             <div class="service-icon">
@@ -185,8 +122,8 @@
                 <rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9h16M9 4v16"/>
               </svg>
             </div>
-            <h3>Picking e packing</h3>
-            <p>Preparação das encomendas — selecionamos, embalamos e etiquetamos cada envio com rigor.</p>
+            <h3>Picking and packing</h3>
+            <p>Order preparation — we select, pack and label each shipment with care.</p>
           </article>
           <article class="service-card">
             <div class="service-icon">
@@ -194,8 +131,8 @@
                 <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
               </svg>
             </div>
-            <h3>Logística</h3>
-            <p>Planeamento e execução de rotas de distribuição, otimizadas para custo e tempo de entrega.</p>
+            <h3>Logistics</h3>
+            <p>Planning and execution of distribution routes, optimised for cost and delivery time.</p>
           </article>
           <article class="service-card">
             <div class="service-icon">
@@ -203,8 +140,8 @@
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
             </div>
-            <h3>Serviço 3PL completo</h3>
-            <p>Outsourcing total da logística — do armazém à porta do seu cliente, sem que precise de infraestrutura própria.</p>
+            <h3>Full 3PL service</h3>
+            <p>Complete logistics outsourcing — from the warehouse to your customer's door, without needing your own infrastructure.</p>
           </article>
         </div>
       </div>
@@ -213,46 +150,46 @@
     <section class="section section--alt" id="3pl">
       <div class="container">
         <div class="section-heading">
-          <p class="eyebrow">O que é o 3PL?</p>
-          <h2>Fulfillment para o seu negócio</h2>
+          <p class="eyebrow">What is 3PL?</p>
+          <h2>Fulfilment for your business</h2>
         </div>
         <div class="tpl-explainer">
           <div class="tpl-steps">
             <div class="tpl-step">
               <div class="tpl-step-num">1</div>
               <div>
-                <h4>A sua empresa envia o stock</h4>
-                <p>Os seus produtos chegam ao nosso armazém e são registados e organizados no sistema.</p>
+                <h4>Your company sends the stock</h4>
+                <p>Your products arrive at our warehouse and are registered and organised in the system.</p>
               </div>
             </div>
             <div class="tpl-step">
               <div class="tpl-step-num">2</div>
               <div>
-                <h4>O cliente faz uma encomenda</h4>
-                <p>Quando alguém compra na sua loja, recebemos a ordem de envio automaticamente.</p>
+                <h4>A customer places an order</h4>
+                <p>When someone buys from your store, we receive the shipping order automatically.</p>
               </div>
             </div>
             <div class="tpl-step">
               <div class="tpl-step-num">3</div>
               <div>
-                <h4>Nós tratamos de tudo</h4>
-                <p>Separamos o produto, embalamos, etiquetamos e entregamos ao cliente final.</p>
+                <h4>We take care of everything</h4>
+                <p>We pick the product, pack it, label it and deliver it to the end customer.</p>
               </div>
             </div>
             <div class="tpl-step">
               <div class="tpl-step-num">4</div>
               <div>
-                <h4>Foco no que importa</h4>
-                <p>A sua empresa não precisa de armazém, equipa de logística nem veículos — só de vender.</p>
+                <h4>Focus on what matters</h4>
+                <p>Your company doesn't need a warehouse, logistics team or vehicles — just to sell.</p>
               </div>
             </div>
           </div>
           <div class="tpl-card">
-            <h3>Perfeito para lojas online</h3>
-            <p>Se tem uma loja de e-commerce mas não tem espaço nem recursos para gerir a logística, o serviço 3PL da CS Logistics é a solução ideal.</p>
-            <p>Cuidamos do stock como se fosse nosso — com organização, rigor e pontualidade nas entregas.</p>
+            <h3>Perfect for online stores</h3>
+            <p>If you have an e-commerce store but don't have the space or resources to manage logistics, CS Logistics' 3PL service is the ideal solution.</p>
+            <p>We look after your stock as if it were our own — with organisation, precision and punctual deliveries.</p>
             <div class="highlight">
-              Não precisa de armazém próprio, equipa de armazém, nem frota de entrega. Externalize a logística e reduza custos fixos.
+              You don't need your own warehouse, warehouse team, or delivery fleet. Outsource logistics and cut fixed costs.
             </div>
           </div>
         </div>
@@ -262,24 +199,24 @@
     <section class="section">
       <div class="container">
         <div class="section-heading">
-          <p class="eyebrow">Para quem é?</p>
-          <h2>Soluções para vários tipos de negócio</h2>
+          <p class="eyebrow">Who is it for?</p>
+          <h2>Solutions for various types of business</h2>
         </div>
         <div class="who-grid">
           <div class="who-card">
             <div class="who-icon">🛒</div>
-            <h3>Lojas online (e-commerce)</h3>
-            <p>Sem armazém próprio, precisam de quem cuide do stock e das entregas.</p>
+            <h3>Online stores (e-commerce)</h3>
+            <p>With no warehouse of their own, they need someone to look after stock and deliveries.</p>
           </div>
           <div class="who-card">
             <div class="who-icon">🏪</div>
-            <h3>Pequenas e médias empresas</h3>
-            <p>Querem externalizar a logística para reduzir custos e focar-se no negócio.</p>
+            <h3>Small and medium businesses</h3>
+            <p>Wanting to outsource logistics to cut costs and focus on the business.</p>
           </div>
           <div class="who-card">
             <div class="who-icon">📦</div>
-            <h3>Importadores e distribuidores</h3>
-            <p>Precisam de um parceiro de armazenamento e distribuição de confiança.</p>
+            <h3>Importers and distributors</h3>
+            <p>They need a trusted storage and distribution partner.</p>
           </div>
         </div>
       </div>
@@ -289,12 +226,12 @@
       <div class="container contact-quick">
         <div class="contact-quick__text">
           <p class="eyebrow eyebrow--light">CS Logistics &amp; Management</p>
-          <h2>Vamos falar sobre o seu negócio?</h2>
-          <p>Contacte a nossa equipa de logística para uma proposta personalizada.</p>
+          <h2>Shall we talk about your business?</h2>
+          <p>Contact our logistics team for a tailored proposal.</p>
         </div>
         <ul class="contact-quick__list">
           <li>
-            <span class="contact-quick__label">Telefone</span>
+            <span class="contact-quick__label">Phone</span>
             <a href="tel:+351917004001">+351 917 004 001</a>
           </li>
           <li>
@@ -302,11 +239,11 @@
             <a href="mailto:geral@carreiraesilva.pt">geral@carreiraesilva.pt</a>
           </li>
           <li>
-            <span class="contact-quick__label">Morada</span>
+            <span class="contact-quick__label">Address</span>
             <span>Rua João Reis, Lote 15 Unit D, Caldas da Rainha</span>
           </li>
         </ul>
-        <a href="contactos.html" class="btn btn-primary btn-large">Falar com a equipa</a>
+        <a href="contactos.html" class="btn btn-primary btn-large">Talk to the team</a>
       </div>
     </section>
 
@@ -315,27 +252,27 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <img src="img/ChatGPT_Image_16_06_2026__10_39_08-removebg-preview.png" class="logo-img" alt="" aria-hidden="true" width="44" height="44">
-        <p>Carreira &amp; Silva Grupo — CS Moving · CS Storage · CS Logistics &amp; Management</p>
+        <img src="../img/ChatGPT_Image_16_06_2026__10_39_08-removebg-preview.png" class="logo-img" alt="" aria-hidden="true" width="44" height="44">
+        <p>Carreira &amp; Silva Group — CS Moving · CS Storage · CS Logistics &amp; Management</p>
       </div>
-      <nav class="footer-nav" aria-label="Ligações rápidas">
-        <h3>Páginas</h3>
+      <nav class="footer-nav" aria-label="Quick links">
+        <h3>Pages</h3>
         <ul>
-          <li><a href="index.html">Início</a></li>
+          <li><a href="index.html">Home</a></li>
           <li><a href="cs-moving.html">CS Moving</a></li>
           <li><a href="cs-storage.html">CS Storage</a></li>
           <li><a href="cs-logistics.html">CS Logistics</a></li>
-          <li><a href="loja.html">Materiais de Embalamento</a></li>
-          <li><a href="contactos.html">Contactos</a></li>
+          <li><a href="loja.html">Packing Materials</a></li>
+          <li><a href="contactos.html">Contact</a></li>
         </ul>
       </nav>
       <div class="footer-legal">
-        <h3>Informações</h3>
+        <h3>Information</h3>
         <ul>
-          <li><a href="#">Política de Privacidade</a></li>
-          <li><a href="#">Termos e Condições</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
           <li class="footer-social">
-            <span class="footer-social__label">Redes Sociais</span>
+            <span class="footer-social__label">Social Media</span>
             <a href="https://www.instagram.com/carreira_silva/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</a>
             <a href="https://www.facebook.com/CarreiraSilvaLda/?locale=pt_PT" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6v1.9h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>Facebook</a>
           </li>
@@ -343,12 +280,10 @@
       </div>
     </div>
     <div class="container footer-bottom">
-      <p>&copy; <span id="year"></span> Carreira &amp; Silva. Todos os direitos reservados.</p>
+      <p>&copy; <span id="year"></span> Carreira &amp; Silva. All rights reserved.</p>
     </div>
   </footer>
 
-  <script src="js/script.js"></script>
+  <script src="../js/script.js"></script>
 </body>
 </html>
-
-

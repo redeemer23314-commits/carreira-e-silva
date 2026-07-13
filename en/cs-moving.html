@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CS Moving | Carreira & Silva</title>
+  <meta name="description" content="CS Moving — national and international moves and transport. With or without packing.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .division-badge { display: inline-block; background: #fdeaea; color: #8b1a1a; font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 14px; border-radius: 999px; margin-bottom: 14px; }
+    .intl-banner { background: var(--color-navy); border-radius: var(--radius); padding: 32px 36px; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+    .intl-banner h3 { color: #fff; font-size: 1.3rem; margin-bottom: 8px; }
+    .intl-banner p { color: rgba(255,255,255,0.75); font-size: 0.92rem; }
+    .elevator-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .elevator-list li { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; color: var(--color-text); }
+    .elevator-list svg { color: var(--color-accent); flex-shrink: 0; }
+    .elevator-card { background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius); padding: 32px 28px; }
+    .elevator-icon-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+    .elevator-card h3 { font-size: 1.05rem; margin-bottom: 14px; text-align: center; }
+    .elevator-when { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .elevator-when li { font-size: 0.88rem; color: var(--color-text-muted); padding: 8px 12px; background: var(--color-bg-alt); border-radius: 6px; border-left: 3px solid var(--color-accent); }
+
+    .moving-block { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .moving-list { list-style: none; display: grid; grid-template-columns: 1fr; gap: 13px; margin-top: 4px; }
+    .moving-list li { display: flex; align-items: flex-start; gap: 11px; font-size: 0.98rem; color: var(--color-text); }
+    .moving-list svg { color: var(--color-accent); flex-shrink: 0; margin-top: 3px; }
+
+    .photo-carousel { position: relative; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--color-border); background: var(--color-bg-alt); box-shadow: 0 18px 40px -26px rgba(11,31,58,0.5); }
+    .photo-carousel__track { display: flex; transition: transform 0.45s ease; }
+    .photo-carousel__slide { min-width: 100%; }
+    .photo-carousel__slide img { width: 100%; height: 420px; object-fit: cover; display: block; }
+    .photo-carousel__arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; border: none; background: rgba(255,255,255,0.92); color: var(--color-navy); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.18); transition: background 0.15s ease; }
+    .photo-carousel__arrow:hover { background: #fff; }
+    .photo-carousel__arrow--prev { left: 12px; }
+    .photo-carousel__arrow--next { right: 12px; }
+    .photo-carousel__dots { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 7px; }
+    .photo-carousel__dots button { width: 9px; height: 9px; border-radius: 50%; border: none; background: rgba(255,255,255,0.55); cursor: pointer; padding: 0; }
+    .photo-carousel__dots button.active { background: #fff; }
+
+    .elevator-feature { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: start; }
+    .elevator-text { text-align: center; background: #e9eef6; border: 1px solid var(--color-border); border-radius: var(--radius); padding: 40px 36px; display: flex; flex-direction: column; gap: 36px; }
+    .elevator-list { align-items: flex-start; }
+    .elevator-list li { justify-content: flex-start; text-align: left; }
+    .elevator-when li { text-align: left; }
+    .elevator-card--plain { background: transparent; border: none; padding: 0; }
+    .elevator-video { position: sticky; top: 100px; width: 100%; border-radius: var(--radius); border: 1px solid var(--color-border); background: #000; display: block; }
+
+    @media (max-width: 860px) {
+      .intl-banner { grid-template-columns: 1fr; }
+      .moving-block { grid-template-columns: 1fr; }
+      .elevator-feature { grid-template-columns: 1fr; }
+      .photo-carousel__slide img { height: 300px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <img src="../img/image_Nero_AI_Image_Upscaler_Photo_Face-removebg-preview.png" class="logo-img" alt="" aria-hidden="true" width="44" height="44">
+        <span class="logo-text">Carreira<span class="logo-silva"> &amp; Silva</span></span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="main-nav" id="mainNav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="cs-moving.html" class="active"><img src="../img/Captura de ecrã 2026-06-24 173014.png" class="nav-division-icon" alt="">CS Moving</a></li>
+          <li><a href="cs-storage.html"><img src="../img/Captura de ecrã 2026-06-24 173001.png" class="nav-division-icon" alt="">CS Storage</a></li>
+          <li><a href="cs-logistics.html"><img src="../img/Captura de ecrã 2026-06-24 173027.png" class="nav-division-icon" alt="">CS Logistics</a></li>
+          <li><a href="loja.html">Packing Materials</a></li>
+          <li><a href="contactos.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="lang-switch">
+        <a href="../cs-moving.html">PT</a>
+        <span class="is-active">EN</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero" style="background: linear-gradient(rgba(11,31,58,0.65), rgba(11,31,58,0.65)), url('../img/Imagem WhatsApp 2025-06-17 às 11.56.35_b44cd516.webp') center/cover no-repeat;">
+      <div class="container hero-inner">
+        <div class="hero-content">
+          <span class="division-badge" style="background:rgba(200,50,50,0.25); color:#ffb3b3;">CS Moving</span>
+          <h1>Moving with care, from start to finish.</h1>
+          <p class="hero-lead">
+            We handle everything — dismantling, packing, transport and reassembly.
+            For individuals and businesses, in Portugal and abroad.
+          </p>
+          <div class="hero-actions">
+            <a href="contactos.html" class="btn btn-primary">Request a quote</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section" id="servicos">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">CS Moving</p>
+          <h2>Everything handled, from start to finish</h2>
+          <p class="section-lead">Our own experienced team takes care of every stage of your move — with the right materials and equipment to protect what's yours.</p>
+        </div>
+        <div class="moving-block">
+          <div class="photo-carousel" data-carousel>
+            <div class="photo-carousel__track">
+              <div class="photo-carousel__slide"><img src="../img/foto2moving.jpeg" alt="CS Moving truck with lifting platform during a move"></div>
+              <div class="photo-carousel__slide"><img src="../img/Imagem WhatsApp 2025-06-17 às 11.56.35_b44cd516.webp" alt="CS Moving lifting platform in operation"></div>
+            </div>
+            <button class="photo-carousel__arrow photo-carousel__arrow--prev" aria-label="Previous photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button class="photo-carousel__arrow photo-carousel__arrow--next" aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <div class="photo-carousel__dots"></div>
+          </div>
+          <div>
+            <h3 style="font-size:1.3rem; margin-bottom:18px; color:var(--color-navy);">Moving services</h3>
+            <ul class="moving-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>Furniture dismantling and assembly</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>Packing of fragile items</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>Transport</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>Moving heavy items (pianos, safes, marble, etc.)</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>Protection of all furniture</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>Business moves (offices, clinics, practices, etc.)</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>International moves</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>Lifting platform</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="elevador">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Featured service</p>
+          <h2>Lifting platform up to the 9th floor</h2>
+          <p class="section-lead">We lift furniture and items straight through the window or balcony, in complete safety. Ideal for high floors, buildings with no internal lift and large items that won't fit up the stairs.</p>
+        </div>
+        <div class="elevator-feature">
+          <div class="elevator-text">
+            <div class="elevator-top">
+              <h3 style="font-size:1.3rem; margin-bottom:18px; color:var(--color-navy);">Advantages of the lifting platform</h3>
+              <ul class="elevator-list">
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+                  Avoids damage to walls and stairs
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+                  Faster and safer on high floors
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+                  Suitable for sofas, beds, wardrobes and pianos
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+                  Operated by a certified team
+                </li>
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+                  Reaches up to the 9th floor
+                </li>
+              </ul>
+            </div>
+            <div class="elevator-bottom">
+            <div class="elevator-card elevator-card--plain">
+              <div class="elevator-icon-wrap">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="72" height="72">
+                  <rect x="20" y="8" width="24" height="36" rx="3" fill="#e8edf5" stroke="#162249" stroke-width="2"/>
+                  <rect x="25" y="14" width="14" height="10" rx="1.5" fill="#fff" stroke="#162249" stroke-width="1.5"/>
+                  <rect x="25" y="28" width="14" height="10" rx="1.5" fill="#fff" stroke="#162249" stroke-width="1.5"/>
+                  <line x1="32" y1="44" x2="32" y2="56" stroke="#C83232" stroke-width="2.5"/>
+                  <polyline points="26,50 32,44 38,50" stroke="#C83232" stroke-width="2.5" stroke-linejoin="round"/>
+                  <line x1="18" y1="8" x2="18" y2="56" stroke="#162249" stroke-width="2" stroke-dasharray="3 3"/>
+                  <line x1="46" y1="8" x2="46" y2="56" stroke="#162249" stroke-width="2" stroke-dasharray="3 3"/>
+                </svg>
+              </div>
+              <h3>When to use it</h3>
+              <ul class="elevator-when">
+                <li>Flats from the 2nd floor up</li>
+                <li>Buildings without an internal lift</li>
+                <li>Stairs that are too narrow</li>
+                <li>Large items</li>
+                <li>Renovations and building works</li>
+              </ul>
+            </div>
+            <a href="contactos.html" class="btn btn-primary" style="margin-top:24px; display:inline-block;">Request a quote with platform</a>
+            </div>
+          </div>
+          <div class="elevator-visual">
+            <video class="elevator-video" controls preload="metadata" playsinline>
+              <source src="../img/video de elevador.mp4" type="video/mp4">
+              Your browser does not support video.
+            </video>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="intl-banner">
+          <div>
+            <h3>National and International</h3>
+            <p>We carry out moves throughout Portugal and to various European countries, with regular routes and competitive prices. Our team handles all cross-border logistics.</p>
+          </div>
+          <a href="contactos.html" class="btn btn-primary btn-large" style="white-space:nowrap;">Request a quote</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--dark" id="contacto-rapido">
+      <div class="container contact-quick">
+        <div class="contact-quick__text">
+          <p class="eyebrow eyebrow--light">CS Moving</p>
+          <h2>Ready to plan your move?</h2>
+          <p>Contact us with any questions or to request a no-obligation quote.</p>
+        </div>
+        <ul class="contact-quick__list">
+          <li>
+            <span class="contact-quick__label">Phone</span>
+            <a href="tel:+351915447559">+351 915 447 559</a>
+          </li>
+          <li>
+            <span class="contact-quick__label">Email</span>
+            <a href="mailto:geral@carreiraesilva.pt">geral@carreiraesilva.pt</a>
+          </li>
+        </ul>
+        <a href="contactos.html" class="btn btn-primary btn-large">Request a quote</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <img src="../img/ChatGPT_Image_16_06_2026__10_39_08-removebg-preview.png" class="logo-img" alt="" aria-hidden="true" width="44" height="44">
+        <p>Carreira &amp; Silva Group — CS Moving · CS Storage · CS Logistics &amp; Management</p>
+      </div>
+      <nav class="footer-nav" aria-label="Quick links">
+        <h3>Pages</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="cs-moving.html">CS Moving</a></li>
+          <li><a href="cs-storage.html">CS Storage</a></li>
+          <li><a href="cs-logistics.html">CS Logistics</a></li>
+          <li><a href="loja.html">Packing Materials</a></li>
+          <li><a href="contactos.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="footer-legal">
+        <h3>Information</h3>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+          <li class="footer-social">
+            <span class="footer-social__label">Social Media</span>
+            <a href="https://www.instagram.com/carreira_silva/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</a>
+            <a href="https://www.facebook.com/CarreiraSilvaLda/?locale=pt_PT" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6v1.9h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>Facebook</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; <span id="year"></span> Carreira &amp; Silva. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+  document.querySelectorAll('[data-carousel]').forEach(function(carousel){
+    var track = carousel.querySelector('.photo-carousel__track');
+    var slides = carousel.querySelectorAll('.photo-carousel__slide');
+    var dotsWrap = carousel.querySelector('.photo-carousel__dots');
+    var current = 0;
+    var autoTimer = null;
+    var resumeTimer = null;
+
+    slides.forEach(function(_, i){
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.setAttribute('aria-label', 'Go to photo ' + (i + 1));
+      dot.addEventListener('click', function(){ go(i); });
+      dotsWrap.appendChild(dot);
+    });
+    var dots = dotsWrap.querySelectorAll('button');
+
+    function go(i){
+      current = (i + slides.length) % slides.length;
+      track.style.transform = 'translateX(-' + (current * 100) + '%)';
+      dots.forEach(function(d, di){ d.classList.toggle('active', di === current); });
+    }
+
+    function startAuto(){
+      autoTimer = setInterval(function(){ go(current + 1); }, 3000);
+    }
+
+    function onUserInteract(){
+      clearInterval(autoTimer);
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(startAuto, 20000);
+    }
+
+    var prev = carousel.querySelector('.photo-carousel__arrow--prev');
+    var next = carousel.querySelector('.photo-carousel__arrow--next');
+    if (prev) prev.addEventListener('click', function(){ go(current - 1); onUserInteract(); });
+    if (next) next.addEventListener('click', function(){ go(current + 1); onUserInteract(); });
+    go(0);
+    startAuto();
+  });
+  </script>
+  <script src="../js/script.js"></script>
+</body>
+</html>
