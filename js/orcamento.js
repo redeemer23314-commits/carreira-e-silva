@@ -21,8 +21,9 @@ const API_URL =
 
 const COOLDOWN_SEGUNDOS = 30;
 
-// Mensagens em PT/EN — escolhidas pelo idioma da página (<html lang="...">).
-const LANG = (document.documentElement.lang || "pt").toLowerCase().startsWith("en") ? "en" : "pt";
+// Mensagens em PT/EN/FR — escolhidas pelo idioma da página (<html lang="...">).
+const _lang = (document.documentElement.lang || "pt").toLowerCase();
+const LANG = _lang.startsWith("en") ? "en" : _lang.startsWith("fr") ? "fr" : "pt";
 const MSG = {
   pt: {
     enviando: "A enviar pedido...",
@@ -37,6 +38,13 @@ const MSG = {
     falha: "Could not send. Please try again.",
     ligacao: "Server connection error. Please try again shortly.",
     aguarde: (s) => `Please wait ${s}s...`,
+  },
+  fr: {
+    enviando: "Envoi de la demande...",
+    sucesso: "Demande envoyée avec succès !",
+    falha: "Impossible d'envoyer. Veuillez réessayer.",
+    ligacao: "Erreur de connexion au serveur. Veuillez réessayer dans un instant.",
+    aguarde: (s) => `Veuillez patienter ${s}s...`,
   },
 }[LANG];
 
@@ -85,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (resposta.ok) {
         status.style.color = "#1a7f37";
-        status.textContent = "✅ " + (LANG === "en" ? MSG.sucesso : (json.mensagem || MSG.sucesso));
+        status.textContent = "✅ " + (LANG === "pt" ? (json.mensagem || MSG.sucesso) : MSG.sucesso);
         form.reset();
         iniciarCooldown(botao, textoBotao);
       } else {
