@@ -448,10 +448,14 @@
       "Miscellaneous":[{n:"Grand piano",v:4.0},{n:"Upright piano",v:2.5},{n:"Safe",v:0.5},{n:"Marble slab",v:0.5},{n:"Small box",v:0.05},{n:"Medium box",v:0.1},{n:"Large box",v:0.2},{n:"Fitness / rowing machine",v:0.8},{n:"Exercise bike",v:0.7},{n:"Treadmill",v:1.0},{n:"Weight rack",v:1.2},{n:"Weight bench",v:0.5},{n:"Hospital adjustable bed",v:2.0}]
     };
 
+    // Flat list with numeric ids — avoids bugs with quotes/apostrophes in names.
+    const flat=[];
+    Object.keys(data).forEach(function(cat){ data[cat].forEach(function(it){ flat.push({id:flat.length, cat:cat, n:it.n, v:it.v}); }); });
+
     const cats=Object.keys(data);
     let active=cats[0];
-    let qty={};
-    cats.forEach(c=>data[c].forEach(it=>{qty[c+'|'+it.n]=0;}));
+    const qty={};
+    flat.forEach(function(it){ qty[it.id]=0; });
 
     function getIcon(name,cat){
       const k=iconMap[name]||'def';
@@ -460,84 +464,74 @@
     }
 
     function renderTabs(){
-      document.getElementById('calcTabs').innerHTML=cats.map(c=>
-        `<button class="calc-tab${c===active?' active':''}" onclick="calcTab('${c}')">${c}</button>`
-      ).join('');
+      document.getElementById('calcTabs').innerHTML=cats.map(function(c){
+        return `<button class="calc-tab${c===active?' active':''}" onclick="calcTab('${c}')">${c}</button>`;
+      }).join('');
     }
 
     window.calcTab=function(c){active=c;renderTabs();renderItems();};
 
     window.calcFilter=function(){
       const q=document.getElementById('calcSearch').value.toLowerCase().trim();
-      if(q){
-        const all=cats.flatMap(c=>data[c].map(it=>({...it,cat:c})));
-        renderCustom(all.filter(it=>it.n.toLowerCase().includes(q)));
-      } else renderItems();
+      if(q){ renderList(flat.filter(function(it){ return it.n.toLowerCase().includes(q); })); }
+      else renderItems();
     };
 
-    function renderCustom(items){
-      document.getElementById('calcItems').innerHTML=items.length
-        ?items.map(it=>rowHTML(it.cat,it)).join('')
-        :'<div style="padding:20px;text-align:center;font-size:12px;color:var(--color-text-muted)">No items found.</div>';
+    function renderItems(){ renderList(flat.filter(function(it){ return it.cat===active; })); }
+
+    function renderList(list){
+      document.getElementById('calcItems').innerHTML=list.length
+        ? list.map(rowHTML).join('')
+        : '<div style="padding:20px;text-align:center;font-size:12px;color:var(--color-text-muted)">No items found.</div>';
     }
 
-    function renderItems(){
-      document.getElementById('calcItems').innerHTML=data[active].map(it=>rowHTML(active,it)).join('');
-    }
-
-    function rowHTML(cat,it){
-      const k=cat+'|'+it.n;
-      const q=qty[k]||0;
+    function rowHTML(it){
+      const q=qty[it.id]||0;
       return `<div class="calc-item-row">
-        ${getIcon(it.n,cat)}
+        ${getIcon(it.n,it.cat)}
         <div style="flex:1">
           <div class="calc-item-name">${it.n}</div>
           <div class="calc-item-vol">${it.v} m³</div>
         </div>
         <div class="calc-qty">
-          <button class="calc-qty-btn" onclick="calcChange('${k}',-1)">−</button>
+          <button class="calc-qty-btn" onclick="calcChange(${it.id},-1)">−</button>
           <span class="calc-qty-val">${q}</span>
-          <button class="calc-qty-btn" onclick="calcChange('${k}',1)">+</button>
+          <button class="calc-qty-btn" onclick="calcChange(${it.id},1)">+</button>
         </div>
       </div>`;
     }
 
-    window.calcChange=function(k,d){
-      qty[k]=Math.max(0,(qty[k]||0)+d);
+    window.calcChange=function(id,d){
+      qty[id]=Math.max(0,(qty[id]||0)+d);
       const q=document.getElementById('calcSearch').value.trim();
       if(q)window.calcFilter();else renderItems();
       renderInv();renderTotal();
     };
 
     window.calcClear=function(){
-      Object.keys(qty).forEach(k=>qty[k]=0);
+      flat.forEach(function(it){ qty[it.id]=0; });
       renderItems();renderInv();renderTotal();
     };
 
     function renderInv(){
-      const items=Object.entries(qty).filter(([,v])=>v>0);
-      document.getElementById('calcInvTitle').textContent=`Inventory (${items.length})`;
+      const chosen=flat.filter(function(it){ return qty[it.id]>0; });
+      document.getElementById('calcInvTitle').textContent=`Inventory (${chosen.length})`;
       const el=document.getElementById('calcInvList');
-      if(!items.length){el.innerHTML='<div class="calc-inv-empty">No items added yet.</div>';return;}
-      el.innerHTML=items.map(([k,v])=>{
-        const[cat,name]=k.split('|');
-        const bg=catColors[cat]||'#f0f0f0';
-        const ik=iconMap[name]||'def';
+      if(!chosen.length){el.innerHTML='<div class="calc-inv-empty">No items added yet.</div>';return;}
+      el.innerHTML=chosen.map(function(it){
+        const bg=catColors[it.cat]||'#f0f0f0';
+        const ik=iconMap[it.n]||'def';
         return `<div class="calc-inv-item">
           <div class="calc-inv-icon" style="background:${bg}">${icons[ik]||icons.def}</div>
-          <span class="calc-inv-name">${name}</span>
-          <span class="calc-inv-qty">×${v}</span>
+          <span class="calc-inv-name">${it.n}</span>
+          <span class="calc-inv-qty">×${qty[it.id]}</span>
         </div>`;
       }).join('');
     }
 
     function renderTotal(){
       let total=0;
-      Object.entries(qty).forEach(([k,v])=>{
-        const[cat,name]=k.split('|');
-        const it=data[cat].find(x=>x.n===name);
-        if(it)total+=it.v*v;
-      });
+      flat.forEach(function(it){ total+=it.v*(qty[it.id]||0); });
       document.getElementById('calcTotal').textContent=total.toFixed(2)+' m³';
       let label='';
       if(total===0)label='Add items to see the estimate';
