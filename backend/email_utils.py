@@ -1,18 +1,40 @@
 """
 Envio de email de notificacao quando chega um novo pedido de orcamento.
-Usa o servico Resend (HTTPS), porque o Render gratis bloqueia SMTP.
+
+Suporta dois metodos, escolhidos pela variavel de ambiente EMAIL_METODO:
+  - "resend" (por defeito) -> envia via API Resend (HTTPS). Util no Render
+    gratis, que bloqueia SMTP.
+  - "smtp" -> envia pelo servidor de email do proprio dominio (ex.: no
+    alojamento da Createinfor, usando a conta geral@carreiraesilva.pt).
+
+Assim, o mesmo codigo funciona no Render (Resend) e, quando o backend passar
+para o alojamento proprio, basta por EMAIL_METODO=smtp.
 """
 
-import json
 import os
+import json
+import smtplib
 import urllib.error
 import urllib.request
+from email.mime.text import MIMEText
+from email.utils import formataddr
 
 EMAIL_TESTE = "redeemer23314@gmail.com"
 RESEND_URL = "https://api.resend.com/emails"
 
 
 def enviar_notificacao(pedido: dict) -> bool:
+    """Envia a notificacao pelo metodo configurado (resend ou smtp)."""
+    metodo = os.environ.get("EMAIL_METODO", "resend").strip().lower()
+    if metodo == "smtp":
+        return _enviar_smtp(pedido)
+    return _enviar_resend(pedido)
+
+
+# ---------------------------------------------------------------------------
+# Metodo 1: Resend (API HTTPS)
+# ---------------------------------------------------------------------------
+def _enviar_resend(pedido: dict) -> bool:
     api_key = os.environ.get("RESEND_API_KEY")
     destino = os.environ.get("EMAIL_TO", EMAIL_TESTE)
     remetente = os.environ.get("RESEND_FROM", "onboarding@resend.dev")
@@ -27,6 +49,10 @@ def enviar_notificacao(pedido: dict) -> bool:
         "subject": f"Novo pedido de orcamento -- {pedido.get('nome', 'sem nome')}",
         "text": _corpo_email(pedido),
     }
+    # Responder ao email vai direto para o cliente.
+    if pedido.get("email"):
+        corpo["reply_to"] = pedido["email"]
+
     dados = json.dumps(corpo).encode("utf-8")
 
     requisicao = urllib.request.Request(
@@ -43,14 +69,53 @@ def enviar_notificacao(pedido: dict) -> bool:
     try:
         with urllib.request.urlopen(requisicao, timeout=15) as resposta:
             resposta.read()
-        print(f"[email] Notificacao enviada para {destino}.")
+        print(f"[email] Notificacao enviada (Resend) para {destino}.")
         return True
     except urllib.error.HTTPError as erro:
         detalhe = erro.read().decode("utf-8", "ignore")
         print(f"[email] Falha ao enviar email (HTTP {erro.code}): {detalhe}")
         return False
     except Exception as erro:
-        print("[email] Falha ao enviar email:", erro)
+        print("[email] Falha ao enviar email (Resend):", erro)
+        return False
+
+
+# ---------------------------------------------------------------------------
+# Metodo 2: SMTP (servidor de email do proprio dominio)
+# ---------------------------------------------------------------------------
+def _enviar_smtp(pedido: dict) -> bool:
+    host = os.environ.get("SMTP_HOST")
+    porta = int(os.environ.get("SMTP_PORT", "587"))
+    utilizador = os.environ.get("SMTP_USER")
+    password = os.environ.get("SMTP_PASS")
+    destino = os.environ.get("EMAIL_TO", EMAIL_TESTE)
+    remetente = os.environ.get("SMTP_FROM", utilizador)
+
+    if not (host and utilizador and password):
+        print("[email] Configuracao SMTP incompleta (SMTP_HOST/USER/PASS) -- envio saltado.")
+        return False
+
+    mensagem = MIMEText(_corpo_email(pedido), "plain", "utf-8")
+    mensagem["Subject"] = f"Novo pedido de orcamento -- {pedido.get('nome', 'sem nome')}"
+    mensagem["From"] = formataddr(("Site Carreira e Silva", remetente))
+    mensagem["To"] = destino
+    if pedido.get("email"):
+        mensagem["Reply-To"] = pedido["email"]
+
+    try:
+        if porta == 465:
+            servidor = smtplib.SMTP_SSL(host, porta, timeout=20)
+        else:
+            servidor = smtplib.SMTP(host, porta, timeout=20)
+            servidor.ehlo()
+            servidor.starttls()
+        with servidor:
+            servidor.login(utilizador, password)
+            servidor.sendmail(remetente, [destino], mensagem.as_string())
+        print(f"[email] Notificacao enviada (SMTP) para {destino}.")
+        return True
+    except Exception as erro:
+        print("[email] Falha ao enviar email (SMTP):", erro)
         return False
 
 
