@@ -85,8 +85,12 @@ def criar_orcamento():
     finally:
         db.close()
 
-    # 7) Avisar a empresa por email (se falhar, o pedido já está guardado na mesma)
-    enviar_notificacao(pedido_dict)
+    # 7) Avisar a empresa por email (se falhar, o pedido já esta guardado na mesma).
+    #    Blindado: um problema no envio NUNCA pode derrubar o pedido nem dar erro 500.
+    try:
+        enviar_notificacao(pedido_dict)
+    except Exception as erro:
+        print("[email] Erro inesperado no envio (ignorado):", erro)
 
     return jsonify({"mensagem": "Pedido recebido com sucesso! Entraremos em contacto."}), 201
 

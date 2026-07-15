@@ -104,9 +104,9 @@ def _enviar_smtp(pedido: dict) -> bool:
 
     try:
         if porta == 465:
-            servidor = smtplib.SMTP_SSL(host, porta, timeout=20)
+            servidor = smtplib.SMTP_SSL(host, porta, timeout=10)
         else:
-            servidor = smtplib.SMTP(host, porta, timeout=20)
+            servidor = smtplib.SMTP(host, porta, timeout=10)
             servidor.ehlo()
             servidor.starttls()
         with servidor:
