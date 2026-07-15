@@ -22,7 +22,15 @@ if DATABASE_URL.startswith("postgres://"):
 # check_same_thread só é necessário (e só existe) no SQLite.
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+# pool_pre_ping: testa a ligacao antes de a usar (evita o erro "SSL connection
+#   closed unexpectedly" quando o Neon fecha ligacoes inativas).
+# pool_recycle: recicla ligacoes com mais de 5 min (o Neon corta as inativas).
+engine = create_engine(
+    DATABASE_URL,
+    connect_args=connect_args,
+    pool_pre_ping=True,
+    pool_recycle=300,
+)
 
 # Fábrica de sessões. Em cada pedido criamos uma sessão nova e fechamo-la no fim.
 Session = sessionmaker(bind=engine)
