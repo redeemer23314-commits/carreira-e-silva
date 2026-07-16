@@ -5,7 +5,14 @@
       "mcp__visualize__show_widget",
       "Bash(cd \"C:/Users/João Calisto\" && ls -lt Downloads/*.jpg Downloads/*.jpeg Downloads/*.png Downloads/*.webp 2>/dev/null | head -25)",
       "Bash(python -m py_compile models.py database.py routes/orcamento.py)",
-      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\subbit1\\\\Desktop\\\\CS\\\\img\\\\\" -File | Where-Object { $_.Extension -match 'png|jpg|jpeg|webp' } | Sort-Object Name | Select-Object Name, @{N='KB';E={[math]::Round\\($_.Length/1KB\\)}}, @{N='Modificado';E={$_.LastWriteTime.ToString\\('dd/MM HH:mm'\\)}})"
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\subbit1\\\\Desktop\\\\CS\\\\img\\\\\" -File | Where-Object { $_.Extension -match 'png|jpg|jpeg|webp' } | Sort-Object Name | Select-Object Name, @{N='KB';E={[math]::Round\\($_.Length/1KB\\)}}, @{N='Modificado';E={$_.LastWriteTime.ToString\\('dd/MM HH:mm'\\)}})",
+      "Bash(ls -lht ~/.claude/projects/*/*.jsonl 2>/dev/null | head -10)",
+      "Bash(cp \"/c/Users/subbit1/.claude/projects/C--Users-subbit1-Desktop-CS/5bc77223-b9c5-4f5a-8814-ad85fdd5a6ff.jsonl\" \"/c/Users/subbit1/Desktop/CS/transcript-backup.jsonl\" && ls -lh \"/c/Users/subbit1/Desktop/CS/transcript-backup.jsonl\")",
+      "Read(//c/Users/subbit1/Desktop/**)",
+      "Bash(node \"C:/Users/subbit1/AppData/Local/Temp/claude/C--Users-subbit1-Desktop-CS/487a81a9-613d-477f-9385-55e5bf76b622/scratchpad/extract.js\")",
+      "Bash(node -e ' *)",
+      "Bash(cp ~/Downloads/privacidade.html ~/Downloads/termos.html . && ls -l privacidade.html termos.html)",
+      "Bash(npx --version)"
     ]
   }
 }
