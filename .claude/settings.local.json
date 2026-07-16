@@ -12,7 +12,15 @@
       "Bash(node \"C:/Users/subbit1/AppData/Local/Temp/claude/C--Users-subbit1-Desktop-CS/487a81a9-613d-477f-9385-55e5bf76b622/scratchpad/extract.js\")",
       "Bash(node -e ' *)",
       "Bash(cp ~/Downloads/privacidade.html ~/Downloads/termos.html . && ls -l privacidade.html termos.html)",
-      "Bash(npx --version)"
+      "Bash(npx --version)",
+      "Bash(git rm *)",
+      "Bash(git check-ignore *)",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap\" -o /tmp/gf.css)",
+      "Read(//tmp/**)",
+      "Bash(grep -E \"^/\\\\*|font-family|src: url|font-weight\" /tmp/gf.css)",
+      "Bash(grep -E \"^/\\\\*|src: url\" /tmp/gf.css)",
+      "Bash(sed -n '/site-footer/,/<\\\\/footer>/p' en/index.html)",
+      "Bash(sed -n '/footer-legal/,/<\\\\/ul>/p' fr/index.html)"
     ]
   }
 }

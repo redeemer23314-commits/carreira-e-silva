@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carreira & Silva Grupo | CS Moving · CS Storage · CS Logistics</title>
   <meta name="description" content="Carreira & Silva Grupo — três divisões especializadas em mudanças, armazenamento e logística.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/style.css">
   <style>
     .division-card--logistics .division-card__badge { background: #edeaf7; color: #3d2f8a; }
@@ -221,11 +219,16 @@
           <h2>Onde nos encontrar</h2>
           <p class="section-lead">Rua João Reis, Lote 15 Unit D, Caldas da Rainha, Portugal</p>
         </div>
-        <div style="border-radius: var(--radius); overflow:hidden; border: 1px solid var(--color-border); height: 380px;">
-          <iframe
-            src="https://maps.google.com/maps?q=39.4201811,-9.1668649&output=embed"
-            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
+        <div class="map-embed" data-map-embed="https://maps.google.com/maps?q=39.4201811,-9.1668649&amp;output=embed" data-map-title="Mapa da localização da Carreira &amp; Silva">
+          <div class="map-embed__ask">
+            <svg class="map-embed__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            <p class="map-embed__title">Ver o mapa</p>
+            <p class="map-embed__note">
+              O mapa é fornecido pela Google. Ao carregá-lo, a Google poderá receber o seu endereço IP
+              e utilizar cookies próprios. Nada é enviado enquanto não carregar no botão.
+            </p>
+            <button type="button" class="btn btn-primary map-embed__btn">Carregar mapa</button>
+          </div>
         </div>
         <div style="text-align:center; margin-top:20px;">
           <a href="https://www.google.com/maps/place/Carreira+%26+Silva+-+Mudan%C3%A7as+e+Guarda-m%C3%B3veis+%7C+Nacional+e+Internacional/@39.4201811,-9.1668649,17z/data=!3m1!4b1!4m6!3m5!1s0xd18b26dbdba70b7:0xbd3f11835fc2b6b!8m2!3d39.420177!4d-9.16429!16s%2Fg%2F1tf25bl2?entry=ttu&g_ep=EgoyMDI2MDYyNC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px;">
