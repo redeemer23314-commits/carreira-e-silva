@@ -1,0 +1,25 @@
+# Configuracao do IDE (JetBrains) — cada pessoa tem a sua, nao pertence ao repo
+.idea/
+
+# Definicoes locais do Claude Code (o launch.json fica, esse e util para todos)
+.claude/settings.local.json
+
+# Atalhos do Windows — guardam o nome do PC e do utilizador la dentro
+*.lnk
+
+# Documentos de trabalho e ficheiros temporarios que nao sao o site
+*.docx
+*.jsonl
+*.tmp
+*.bak
+
+# Lixo do sistema
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Dependencias, caso algum dia se instale algo aqui
+node_modules/
+__pycache__/
+*.pyc
+.env

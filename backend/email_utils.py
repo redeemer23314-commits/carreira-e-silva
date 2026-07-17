@@ -16,11 +16,24 @@ import json
 import smtplib
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 from email.mime.text import MIMEText
 from email.utils import formataddr
 
 EMAIL_TESTE = "redeemer23314@gmail.com"
 RESEND_URL = "https://api.resend.com/emails"
+
+# Fuso de Portugal continental, para as datas nos emails baterem certo com o
+# relogio de quem os le. Nada aqui pode rebentar no arranque: se o zoneinfo ou
+# a base de dados de fusos nao existirem, fica UTC -- a hora aparece uma hora
+# atrasada no verao, o que e feio mas inofensivo. Uma excecao neste import
+# derrubaria a API inteira e o formulario deixaria de aceitar pedidos.
+try:
+    from zoneinfo import ZoneInfo
+
+    FUSO_LISBOA = ZoneInfo("Europe/Lisbon")
+except Exception:
+    FUSO_LISBOA = timezone.utc
 
 
 def enviar_notificacao(pedido: dict) -> bool:
@@ -46,7 +59,7 @@ def _enviar_resend(pedido: dict) -> bool:
     corpo = {
         "from": f"Site Carreira e Silva <{remetente}>",
         "to": [destino],
-        "subject": f"Novo pedido de orcamento -- {pedido.get('nome', 'sem nome')}",
+        "subject": f"Novo pedido de orçamento — {pedido.get('nome', 'sem nome')}",
         "text": _corpo_email(pedido),
     }
     # Responder ao email vai direto para o cliente.
@@ -96,7 +109,7 @@ def _enviar_smtp(pedido: dict) -> bool:
         return False
 
     mensagem = MIMEText(_corpo_email(pedido), "plain", "utf-8")
-    mensagem["Subject"] = f"Novo pedido de orcamento -- {pedido.get('nome', 'sem nome')}"
+    mensagem["Subject"] = f"Novo pedido de orçamento — {pedido.get('nome', 'sem nome')}"
     mensagem["From"] = formataddr(("Site Carreira e Silva", remetente))
     mensagem["To"] = destino
     if pedido.get("email"):
@@ -119,21 +132,40 @@ def _enviar_smtp(pedido: dict) -> bool:
         return False
 
 
+def _data_legivel(iso: str) -> str:
+    """Converte '2026-07-17T12:07:57.992201' em '17/07/2026 às 13:07'.
+
+    O models.py guarda `criado_em` com datetime.utcnow(), ou seja em UTC e sem
+    fuso indicado. O servidor do Render também corre em UTC, por isso o fuso de
+    Lisboa tem de ser dito explicitamente -- senao a hora no email fica uma hora
+    atrasada no verao face ao relogio de quem o le.
+    """
+    if not iso:
+        return "-"
+    try:
+        momento = datetime.fromisoformat(iso.replace("Z", "+00:00"))
+        if momento.tzinfo is None:
+            momento = momento.replace(tzinfo=timezone.utc)
+        return momento.astimezone(FUSO_LISBOA).strftime("%d/%m/%Y às %H:%M")
+    except (ValueError, TypeError):
+        return iso
+
+
 def _corpo_email(p: dict) -> str:
     def linha(rotulo, chave):
         valor = p.get(chave) or "-"
         return f"{rotulo}: {valor}"
 
     return "\n".join([
-        "Foi recebido um novo pedido de orcamento no site.",
+        "Foi recebido um novo pedido de orçamento no site.",
         "",
         "==== DADOS DO CLIENTE ====",
         linha("Nome", "nome"),
         linha("Email", "email"),
         linha("Telefone", "telefone"),
-        linha("Codigo postal", "codigo_postal"),
+        linha("Código postal", "codigo_postal"),
         "",
-        "==== MUDANCA ====",
+        "==== MUDANÇA ====",
         linha("Tipo", "tipo"),
         linha("Morada de origem", "origem"),
         linha("Morada de destino", "destino"),
@@ -142,10 +174,10 @@ def _corpo_email(p: dict) -> str:
         linha("Elevador (origem)", "elevador_origem"),
         linha("Elevador (destino)", "elevador_destino"),
         "",
-        "==== ITENS E SERVICOS ====",
+        "==== ITENS E SERVIÇOS ====",
         linha("Itens a transportar", "itens"),
         linha("Itens especiais", "especial"),
-        linha("Servicos adicionais", "servico"),
+        linha("Serviços adicionais", "servico"),
         "",
         "==== DATAS ====",
         linha("Data preferencial", "data"),
@@ -154,5 +186,5 @@ def _corpo_email(p: dict) -> str:
         "==== MENSAGEM ====",
         p.get("observacoes") or "-",
         "",
-        f"(Recebido em {p.get('criado_em', '')})",
+        f"(Recebido em {_data_legivel(p.get('criado_em', ''))})",
     ])
