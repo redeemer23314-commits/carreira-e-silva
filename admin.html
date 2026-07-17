@@ -144,6 +144,24 @@
     @media (max-width:460px) {
       .stats { grid-template-columns:1fr; }
     }
+
+    /* Vista Segurança */
+    .seg-card { display:flex; align-items:center; gap:14px; padding:16px 20px; border-radius:12px; border:1px solid var(--border); background:#fff; }
+    .seg-card--ok { border-left:4px solid #16A34A; }
+    .seg-card--warn { border-left:4px solid #D97706; background:#FFFBEB; }
+    .seg-card--blocked { border-left:4px solid var(--red); background:#FBECEC; }
+    .seg-card__icon { flex-shrink:0; }
+    .seg-card__text { flex:1; }
+    .seg-card__title { font-family:var(--font-display); font-weight:700; color:var(--ink); font-size:1rem; margin-bottom:2px; }
+    .seg-card__sub { color:var(--muted); font-size:.88rem; }
+    .seg-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+    .seg-table th { text-align:left; padding:10px 12px; background:#F4F5F7; color:var(--muted); font-family:var(--font-display); font-size:.78rem; text-transform:uppercase; letter-spacing:.5px; font-weight:700; border-bottom:1px solid var(--border); }
+    .seg-table td { padding:10px 12px; border-bottom:1px solid var(--border); color:var(--ink); vertical-align:top; }
+    .seg-table td.ip { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.86rem; color:var(--navy); }
+    .seg-table td.ua { color:var(--muted); font-size:.82rem; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .seg-table tr.mine { background:#FFFBEB; }
+    .seg-empty { padding:32px; text-align:center; color:var(--muted); font-size:.95rem; }
+    .seg-info { display:flex; gap:10px; align-items:center; color:var(--muted); font-size:.85rem; margin-top:14px; }
   </style>
 </head>
 <body>
@@ -167,6 +185,7 @@
       <label for="token">Palavra-passe (ADMIN_TOKEN)</label>
       <input type="password" id="token" placeholder="..." onkeydown="if(event.key==='Enter')entrar()">
       <button class="btn-primary" onclick="entrar()">Entrar</button>
+      <div id="gateMsg" style="margin-top:14px;"></div>
     </div>
   </main>
 
@@ -182,6 +201,10 @@
           <button class="side-item" data-view="formularios" onclick="mudarVista('formularios')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
             Formulários
+          </button>
+          <button class="side-item" data-view="seguranca" onclick="mudarVista('seguranca'); carregarSeguranca()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="19" height="19"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Segurança
           </button>
         </aside>
 
@@ -220,6 +243,16 @@
             </div>
           </section>
 
+          <!-- Vista: Segurança -->
+          <section id="view-seguranca" class="view" hidden>
+            <div id="segEstado"></div>
+            <div class="panel" style="margin-top:20px;">
+              <h2 class="panel__title">Tentativas de entrada falhadas</h2>
+              <p class="panel__hint">Últimas 24 horas · Bloqueio automático após 5 falhas em 1 hora</p>
+              <div id="segTentativas">A carregar...</div>
+            </div>
+          </section>
+
           <!-- Vista: Formulários -->
           <section id="view-formularios" class="view" hidden>
             <div class="toolbar" id="toolbar" style="display:none;">
@@ -248,7 +281,33 @@
 
     let TODOS = [];
 
-    function entrar(){ const t=document.getElementById("token").value.trim(); if(!t)return; localStorage.setItem("cs_admin_token",t); mostrarPainel(); carregar(); }
+    async function entrar(){
+      const t=document.getElementById("token").value.trim();
+      if(!t) return;
+      // Faz um teste antes de guardar o token, para mostrar a mensagem certa
+      // ao utilizador (n falhas, bloqueio, etc.) em vez de o levar para o
+      // painel e ele falhar la dentro sem contexto.
+      const msg=document.getElementById("gateMsg");
+      msg && (msg.textContent="A verificar...", msg.className="msg info");
+      try{
+        const resp=await fetch(API_BASE+"/api/orcamentos",{headers:{"X-Admin-Token":t}});
+        if(resp.ok){
+          localStorage.setItem("cs_admin_token",t);
+          mostrarPainel(); carregar(); return;
+        }
+        let corpo={}; try{ corpo=await resp.json(); }catch(e){}
+        if(resp.status===429){
+          msg && (msg.textContent=corpo.error||"Este endereço está bloqueado.", msg.className="msg err");
+        } else if(resp.status===401){
+          const rest=(typeof corpo.tentativas_restantes==="number")?" Restam "+corpo.tentativas_restantes+" tentativa(s) antes do bloqueio.":"";
+          msg && (msg.textContent="Palavra-passe incorreta."+rest, msg.className="msg err");
+        } else {
+          msg && (msg.textContent=corpo.error||"Erro "+resp.status, msg.className="msg err");
+        }
+      }catch(e){
+        msg && (msg.textContent='Não foi possível ligar à API. Ela pode estar a "acordar" (~50s) — espera um pouco e tenta de novo.', msg.className="msg err");
+      }
+    }
     function sair(){ localStorage.removeItem("cs_admin_token"); location.reload(); }
     function mostrarPainel(){ document.getElementById("gateWrap").style.display="none"; document.getElementById("painel").style.display="block"; document.getElementById("topActions").style.display="flex"; }
 
@@ -469,6 +528,86 @@
         TODOS=TODOS.filter(x=>x.id!==id);
         render();
       }catch(e){ alert("Não foi possível apagar o pedido. Tenta de novo."); }
+    }
+
+    // ---------- Segurança ----------
+    async function carregarSeguranca(){
+      const token=localStorage.getItem("cs_admin_token");
+      const estado=document.getElementById("segEstado");
+      const tabela=document.getElementById("segTentativas");
+      estado.innerHTML='';
+      tabela.innerHTML='<div class="msg info">A carregar...</div>';
+      try{
+        const resp=await fetch(API_BASE+"/api/admin/seguranca",{headers:{"X-Admin-Token":token}});
+        if(!resp.ok) throw new Error("Erro "+resp.status);
+        const dados=await resp.json();
+        renderSegEstado(dados);
+        renderSegTentativas(dados);
+      }catch(e){
+        tabela.innerHTML='<div class="msg err">Não foi possível carregar. Tenta de novo daqui a pouco.</div>';
+      }
+    }
+
+    function renderSegEstado(d){
+      const cx=document.getElementById("segEstado");
+      const falhas=d.falhas_do_ip_atual||0;
+      const max=d.politica.max_falhas;
+      let cls="ok", titulo="Este endereço está limpo", sub=`Nenhuma tentativa falhada nas últimas ${d.politica.janela_minutos} minutos deste IP (${esc(d.ip_atual)}).`;
+      if(falhas>0 && falhas<max){
+        cls="warn"; titulo=`Este endereço tem ${falhas} tentativa(s) falhada(s)`;
+        sub=`Faltam ${max-falhas} para bloquear este IP durante 1 hora.`;
+      } else if(falhas>=max){
+        cls="blocked"; titulo="Este endereço está bloqueado";
+        sub=`Terá de esperar até que as ${falhas} tentativas saiam da janela de ${d.politica.janela_minutos} minutos.`;
+      }
+      const icones={
+        ok:'<svg viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" width="26" height="26"><path d="M20 6L9 17l-5-5"/></svg>',
+        warn:'<svg viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" width="26" height="26"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
+        blocked:'<svg viewBox="0 0 24 24" fill="none" stroke="#C83232" stroke-width="2" width="26" height="26"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>'
+      };
+      cx.innerHTML=`
+        <div class="seg-card seg-card--${cls}">
+          <div class="seg-card__icon">${icones[cls]}</div>
+          <div class="seg-card__text">
+            <div class="seg-card__title">${esc(titulo)}</div>
+            <div class="seg-card__sub">${esc(sub)}</div>
+          </div>
+        </div>
+        <div class="seg-info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="14" height="14"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          Política: ${max} falhas em ${d.politica.janela_minutos} min bloqueiam o IP. Tudo é registado.
+        </div>
+      `;
+    }
+
+    function renderSegTentativas(d){
+      const cx=document.getElementById("segTentativas");
+      const lista=d.tentativas||[];
+      if(!lista.length){ cx.innerHTML='<div class="seg-empty">Sem tentativas falhadas nas últimas 24 horas. 🎉</div>'; return; }
+      const linhas=lista.map(t=>{
+        const meu=(t.ip===d.ip_atual)?' class="mine"':'';
+        return `<tr${meu}>
+          <td>${esc(formatarMomento(t.momento))}</td>
+          <td class="ip">${esc(t.ip||'—')}</td>
+          <td class="ua" title="${esc(t.user_agent||'')}">${esc(t.user_agent||'—')}</td>
+        </tr>`;
+      }).join('');
+      cx.innerHTML=`
+        <table class="seg-table">
+          <thead><tr><th>Momento</th><th>IP</th><th>Cliente</th></tr></thead>
+          <tbody>${linhas}</tbody>
+        </table>
+        <div class="seg-info">${lista.length} tentativa(s) nas últimas 24 horas · Linhas destacadas são do IP atual.</div>
+      `;
+    }
+
+    function formatarMomento(iso){
+      if(!iso) return "—";
+      try{
+        const d=new Date(iso+(iso.endsWith("Z")?"":"Z"));
+        const p=n=>String(n).padStart(2,"0");
+        return `${p(d.getDate())}/${p(d.getMonth()+1)} ${p(d.getHours())}:${p(d.getMinutes())}`;
+      }catch(e){ return iso; }
     }
 
     if(localStorage.getItem("cs_admin_token")){ mostrarPainel(); carregar(); }

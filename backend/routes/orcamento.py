@@ -6,6 +6,7 @@ Rotas da API de orçamentos.
 """
 
 import os
+from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, request
 
@@ -13,7 +14,13 @@ from database import Session
 from email_utils import enviar_notificacao
 from extensions import limiter
 from filtro import limpar_texto, validar_conteudo
-from models import PedidoOrcamento
+from models import PedidoOrcamento, TentativaLoginFalhada
+
+# Politica de bloqueio do admin: 5 falhas na ultima hora bloqueiam esse IP
+# durante 1 hora (janela deslizante). Se te bloqueares a ti proprio, espera 1h
+# ou reinicia o servico no Render.
+MAX_FALHAS = 5
+JANELA_MINUTOS = 60
 
 bp = Blueprint("orcamento", __name__)
 
@@ -95,14 +102,79 @@ def criar_orcamento():
     return jsonify({"mensagem": "Pedido recebido com sucesso! Entraremos em contacto."}), 201
 
 
+def _ip_do_pedido() -> str:
+    """IP de quem esta a fazer o pedido, ja considerando o proxy do Render."""
+    # ProxyFix esta ativo no app.py, portanto request.remote_addr ja tem o IP
+    # real. Truncamos a 64 chars por seguranca (a coluna e VARCHAR(64)).
+    return (request.remote_addr or "desconhecido")[:64]
+
+
+def _contar_falhas_recentes(db, ip: str) -> int:
+    """Quantas falhas este IP teve na janela de bloqueio."""
+    limite = datetime.utcnow() - timedelta(minutes=JANELA_MINUTOS)
+    return (
+        db.query(TentativaLoginFalhada)
+        .filter(TentativaLoginFalhada.ip == ip)
+        .filter(TentativaLoginFalhada.momento >= limite)
+        .count()
+    )
+
+
+def _registar_falha(db, ip: str):
+    """Guarda uma tentativa falhada. Erros aqui nunca podem derrubar o pedido."""
+    try:
+        db.add(
+            TentativaLoginFalhada(
+                ip=ip,
+                user_agent=(request.headers.get("User-Agent", "") or "")[:500],
+            )
+        )
+        db.commit()
+    except Exception as erro:
+        db.rollback()
+        print("[admin] Falha a registar tentativa (ignorado):", erro)
+
+
 def _verificar_admin():
-    """Devolve uma resposta de erro se o token de admin não for válido; senão None."""
+    """Devolve uma resposta de erro se o token de admin não for válido; senão None.
+
+    Regra de bloqueio: 5 falhas na ultima hora deste IP -> bloqueio ate as
+    falhas sairem da janela. Enquanto bloqueado, nem o token certo entra
+    (obriga a esperar, mesmo que o atacante acerte).
+    """
     token_correto = os.environ.get("ADMIN_TOKEN")
     if not token_correto:
         return jsonify({"error": "Área de admin desativada (ADMIN_TOKEN não configurado)."}), 403
-    if request.headers.get("X-Admin-Token") != token_correto:
-        return jsonify({"error": "Não autorizado."}), 401
-    return None
+
+    ip = _ip_do_pedido()
+    db = Session()
+    try:
+        # Ja esta bloqueado? Se sim, nem verifica o token.
+        if _contar_falhas_recentes(db, ip) >= MAX_FALHAS:
+            resposta = jsonify({
+                "error": (
+                    f"Demasiadas tentativas falhadas. "
+                    f"Este endereço está bloqueado durante {JANELA_MINUTOS} minutos."
+                ),
+                "bloqueado": True,
+            })
+            return resposta, 429
+
+        # Token correto -> passa.
+        if request.headers.get("X-Admin-Token") == token_correto:
+            return None
+
+        # Token errado -> regista falha e recusa.
+        _registar_falha(db, ip)
+        falhas_agora = _contar_falhas_recentes(db, ip)
+        restantes = max(0, MAX_FALHAS - falhas_agora)
+        return jsonify({
+            "error": "Não autorizado.",
+            "falhas": falhas_agora,
+            "tentativas_restantes": restantes,
+        }), 401
+    finally:
+        db.close()
 
 
 @bp.route("/api/orcamentos", methods=["GET"])
@@ -156,5 +228,38 @@ def apagar_orcamento(pedido_id):
         db.delete(pedido)
         db.commit()
         return jsonify({"mensagem": "Pedido apagado."})
+    finally:
+        db.close()
+
+
+@bp.route("/api/admin/seguranca", methods=["GET"])
+def admin_seguranca():
+    """Lista as tentativas falhadas das ultimas 24h e o estado do IP atual."""
+    erro = _verificar_admin()
+    if erro:
+        return erro
+
+    limite = datetime.utcnow() - timedelta(hours=24)
+    ip_atual = _ip_do_pedido()
+
+    db = Session()
+    try:
+        tentativas = (
+            db.query(TentativaLoginFalhada)
+            .filter(TentativaLoginFalhada.momento >= limite)
+            .order_by(TentativaLoginFalhada.momento.desc())
+            .limit(200)
+            .all()
+        )
+        return jsonify({
+            "politica": {
+                "max_falhas": MAX_FALHAS,
+                "janela_minutos": JANELA_MINUTOS,
+            },
+            "ip_atual": ip_atual,
+            "falhas_do_ip_atual": _contar_falhas_recentes(db, ip_atual),
+            "tentativas": [t.to_dict() for t in tentativas],
+            "total_24h": len(tentativas),
+        })
     finally:
         db.close()

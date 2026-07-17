@@ -26,8 +26,15 @@ except ImportError:
 from database import init_db
 from extensions import limiter
 from routes.orcamento import bp
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
+
+# O Render (e qualquer alojamento com proxy inverso a frente) passa o IP real
+# do visitante no header X-Forwarded-For. Sem isto, request.remote_addr fica
+# sempre igual (IP interno do proxy) e o bloqueio por IP do admin nao vale
+# nada. O x_for=1 diz "confia num salto de proxy", que e o padrao para Render.
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
 # CORS: quais os sites autorizados a chamar a API.
 # Por defeito "*" (qualquer um) para facilitar os testes. Em produção convém

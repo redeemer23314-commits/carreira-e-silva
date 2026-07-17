@@ -77,3 +77,27 @@ class PedidoOrcamento(Base):
             "realizado": bool(self.realizado),
             "criado_em": self.criado_em.isoformat() if self.criado_em else None,
         }
+
+
+class TentativaLoginFalhada(Base):
+    """Registo de uma tentativa de entrar no admin com token errado.
+
+    Usado para duas coisas: mostrar ao admin quem esta a tentar entrar, e
+    aplicar o bloqueio de 5 falhas por hora e por IP.
+    """
+
+    __tablename__ = "tentativas_login_falhadas"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    ip = Column(String(64), index=True)
+    momento = Column(DateTime, default=datetime.utcnow, index=True)
+    # O user-agent ajuda a distinguir um browser real de um script.
+    user_agent = Column(String(500))
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "ip": self.ip,
+            "momento": self.momento.isoformat() if self.momento else None,
+            "user_agent": self.user_agent,
+        }
