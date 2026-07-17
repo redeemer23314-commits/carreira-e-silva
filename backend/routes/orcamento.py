@@ -140,7 +140,14 @@ def _verificar_admin():
 
     Regra de bloqueio: 5 falhas na ultima hora deste IP -> bloqueio ate as
     falhas sairem da janela. Enquanto bloqueado, nem o token certo entra
-    (obriga a esperar, mesmo que o atacante acerte).
+    (obriga a esperar, mesmo que o atacante acerte -- isto e importante:
+    e o que impede um atacante que ande a tentar entrar de destrancar-se
+    quando finalmente acerta).
+
+    Quando o token esta correto E o IP nao esta bloqueado, as tentativas
+    falhadas anteriores desse IP sao apagadas -- para que uma pessoa que se
+    tenha enganado 4 vezes e a quinta acerte nao ande sempre "a beira" do
+    bloqueio na proxima vez.
     """
     token_correto = os.environ.get("ADMIN_TOKEN")
     if not token_correto:
@@ -160,8 +167,9 @@ def _verificar_admin():
             })
             return resposta, 429
 
-        # Token correto -> passa.
+        # Token correto -> passa e limpa o historico de falhas deste IP.
         if request.headers.get("X-Admin-Token") == token_correto:
+            _limpar_falhas(db, ip)
             return None
 
         # Token errado -> regista falha e recusa.
@@ -175,6 +183,28 @@ def _verificar_admin():
         }), 401
     finally:
         db.close()
+
+
+def _limpar_falhas(db, ip: str):
+    """Apaga o historico de tentativas falhadas deste IP.
+
+    Chamado quando o token correto entra. Se nao havia nada, o DELETE nao faz
+    nada e o custo e desprezavel -- por isso corre em todos os pedidos com
+    token valido (nao ha forma barata de distinguir "primeiro login" de
+    "chamada seguinte").
+    """
+    try:
+        apagadas = (
+            db.query(TentativaLoginFalhada)
+            .filter(TentativaLoginFalhada.ip == ip)
+            .delete(synchronize_session=False)
+        )
+        if apagadas:
+            db.commit()
+            print(f"[admin] Login bem-sucedido -- {apagadas} tentativa(s) falhada(s) desse dispositivo apagadas.")
+    except Exception as erro:
+        db.rollback()
+        print("[admin] Falha a limpar tentativas (ignorado):", erro)
 
 
 @bp.route("/api/orcamentos", methods=["GET"])
