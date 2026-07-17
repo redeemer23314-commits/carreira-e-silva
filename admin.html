@@ -552,12 +552,12 @@
       const cx=document.getElementById("segEstado");
       const falhas=d.falhas_do_ip_atual||0;
       const max=d.politica.max_falhas;
-      let cls="ok", titulo="Este endereço está limpo", sub=`Nenhuma tentativa falhada nas últimas ${d.politica.janela_minutos} minutos deste IP (${esc(d.ip_atual)}).`;
+      let cls="ok", titulo="Está tudo limpo", sub=`Nenhuma tentativa falhada nas últimas ${d.politica.janela_minutos} minutos a partir deste dispositivo.`;
       if(falhas>0 && falhas<max){
-        cls="warn"; titulo=`Este endereço tem ${falhas} tentativa(s) falhada(s)`;
-        sub=`Faltam ${max-falhas} para bloquear este IP durante 1 hora.`;
+        cls="warn"; titulo=`Este dispositivo tem ${falhas} tentativa(s) falhada(s)`;
+        sub=`Faltam ${max-falhas} para bloquear o acesso durante 1 hora.`;
       } else if(falhas>=max){
-        cls="blocked"; titulo="Este endereço está bloqueado";
+        cls="blocked"; titulo="Este dispositivo está bloqueado";
         sub=`Terá de esperar até que as ${falhas} tentativas saiam da janela de ${d.politica.janela_minutos} minutos.`;
       }
       const icones={
@@ -585,19 +585,17 @@
       const lista=d.tentativas||[];
       if(!lista.length){ cx.innerHTML='<div class="seg-empty">Sem tentativas falhadas nas últimas 24 horas. 🎉</div>'; return; }
       const linhas=lista.map(t=>{
-        const meu=(t.ip===d.ip_atual)?' class="mine"':'';
-        return `<tr${meu}>
+        return `<tr>
           <td>${esc(formatarMomento(t.momento))}</td>
-          <td class="ip">${esc(t.ip||'—')}</td>
           <td class="ua" title="${esc(t.user_agent||'')}">${esc(t.user_agent||'—')}</td>
         </tr>`;
       }).join('');
       cx.innerHTML=`
         <table class="seg-table">
-          <thead><tr><th>Momento</th><th>IP</th><th>Cliente</th></tr></thead>
+          <thead><tr><th>Momento</th><th>Cliente</th></tr></thead>
           <tbody>${linhas}</tbody>
         </table>
-        <div class="seg-info">${lista.length} tentativa(s) nas últimas 24 horas · Linhas destacadas são do IP atual.</div>
+        <div class="seg-info">${lista.length} tentativa(s) nas últimas 24 horas</div>
       `;
     }
 
