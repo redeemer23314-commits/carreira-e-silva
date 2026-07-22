@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="icon" type="image/png" href="img/image_Nero_AI_Image_Upscaler_Photo_Face-removebg-preview.png">
+  <title>Loja | Materiais de Embalamento | Carreira & Silva</title>
+  <meta name="description" content="Loja Carreira & Silva — materiais de embalamento: caixas de cartão, rolos de cartão canelado, plástico bolha e muito mais.">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ---------- Loja / catálogo de produtos ---------- */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 26px;
+    }
+    .product-card {
+      background: #fff;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 32px -22px rgba(11,31,58,0.35);
+    }
+    .product-card__img {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      background: var(--color-bg-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-card__img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .product-card__img.is-empty::after {
+      content: 'Foto em breve';
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+    .product-card__body {
+      padding: 16px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .product-card__name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--color-navy);
+      font-size: 1.02rem;
+      margin-bottom: 4px;
+    }
+    .product-card__sub {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+    }
+    .product-card__price {
+      margin-top: auto;
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--color-accent);
+      font-size: 0.92rem;
+    }
+    @media (max-width: 960px) {
+      .shop-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 680px) {
+      .shop-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    }
+    @media (max-width: 420px) {
+      .shop-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <img src="img/image_Nero_AI_Image_Upscaler_Photo_Face-removebg-preview.png" class="logo-img" alt="" aria-hidden="true" width="44" height="44">
+        <span class="logo-text">Carreira<span class="logo-silva"> &amp; Silva</span></span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="main-nav" id="mainNav">
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="cs-moving.html"><img src="img/Captura de ecrã 2026-06-24 173014.png" class="nav-division-icon" alt="">CS Moving</a></li>
+          <li><a href="cs-storage.html"><img src="img/Captura de ecrã 2026-06-24 173001.png" class="nav-division-icon" alt="">CS Storage</a></li>
+          <li><a href="cs-logistics.html"><img src="img/Captura de ecrã 2026-06-24 173027.png" class="nav-division-icon" alt="">CS Logistics</a></li>
+          <li><a href="loja.html" class="active">Materiais de Embalamento</a></li>
+          <li><a href="contactos.html">Contactos</a></li>
+        </ul>
+      </nav>
+      <div class="lang-switch">
+        <span class="is-active">PT</span>
+        <a href="en/loja.html">EN</a>
+        <a href="fr/loja.html">FR</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Loja</p>
+          <h2>Materiais de embalamento</h2>
+          <p class="section-lead">
+            Caixas de cartão, rolos de cartão canelado, plástico bolha e outros materiais
+            para embalar e proteger os seus bens. Fale connosco para preços e disponibilidade.
+          </p>
+        </div>
+
+        <div class="shop-grid">
+
+          <!-- PRODUTO -->
+          <article class="product-card">
+            <div class="product-card__img">
+              <img src="img/loja/caixa-roupeiro.jpg" alt="Caixa Roupeiro" loading="lazy" onerror="var p=this.closest('.product-card__img');p.classList.add('is-empty');this.remove();">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Caixa Roupeiro</h3>
+              <p class="product-card__sub">50 × 50 × 100 cm</p>
+              <p class="product-card__price">Preço sob consulta</p>
+            </div>
+          </article>
+
+          <!-- PRODUTO -->
+          <article class="product-card">
+            <div class="product-card__img">
+              <img src="img/loja/rolo-cartao-canelado.jpg" alt="Rolo Cartão Canelado" loading="lazy" onerror="var p=this.closest('.product-card__img');p.classList.add('is-empty');this.remove();">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Rolo Cartão Canelado</h3>
+              <p class="product-card__sub">1,00 × 60 m</p>
+              <p class="product-card__price">Preço sob consulta</p>
+            </div>
+          </article>
+
+          <!-- PRODUTO -->
+          <article class="product-card">
+            <div class="product-card__img">
+              <img src="img/loja/caixa-ref-9.jpg" alt="Caixa Ref. 9" loading="lazy" onerror="var p=this.closest('.product-card__img');p.classList.add('is-empty');this.remove();">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Caixa Ref. 9</h3>
+              <p class="product-card__sub">350 × 350 × 350 mm</p>
+              <p class="product-card__price">Preço sob consulta</p>
+            </div>
+          </article>
+
+          <!-- PRODUTO -->
+          <article class="product-card">
+            <div class="product-card__img">
+              <img src="img/loja/bolha-de-ar.jpg" alt="Bolha de ar" loading="lazy" onerror="var p=this.closest('.product-card__img');p.classList.add('is-empty');this.remove();">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Bolha de ar</h3>
+              <p class="product-card__sub">120 cm × 220 m</p>
+              <p class="product-card__price">Preço sob consulta</p>
+            </div>
+          </article>
+
+          <!-- PRODUTO -->
+          <article class="product-card">
+            <div class="product-card__img">
+              <img src="img/loja/caixa-ref-51.jpg" alt="Caixa Ref. 51" loading="lazy" onerror="var p=this.closest('.product-card__img');p.classList.add('is-empty');this.remove();">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Caixa Ref. 51</h3>
+              <p class="product-card__sub">400 × 400 × 400 mm</p>
+              <p class="product-card__price">Preço sob consulta</p>
+            </div>
+          </article>
+
+          <!-- PRODUTO -->
+          <article class="product-card">
+            <div class="product-card__img">
+              <img src="img/loja/caixa-ref-19.jpg" alt="Caixa Ref. 19" loading="lazy" onerror="var p=this.closest('.product-card__img');p.classList.add('is-empty');this.remove();">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Caixa Ref. 19</h3>
+              <p class="product-card__sub">455 × 355 × 310 mm</p>
+              <p class="product-card__price">Preço sob consulta</p>
+            </div>
+          </article>
+
+          <!-- PRODUTO -->
+          <article class="product-card">
+            <div class="product-card__img">
+              <img src="img/loja/caixa-copos-75.jpg" alt="Caixa copos 75 uni." loading="lazy" onerror="var p=this.closest('.product-card__img');p.classList.add('is-empty');this.remove();">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Caixa copos 75 uni.</h3>
+              <p class="product-card__sub">445 × 445 × 575 mm</p>
+              <p class="product-card__price">Preço sob consulta</p>
+            </div>
+          </article>
+
+          <!-- PRODUTO -->
+          <article class="product-card">
+            <div class="product-card__img">
+              <img src="img/loja/caixa-ref-6.jpg" alt="Caixa Ref. 6" loading="lazy" onerror="var p=this.closest('.product-card__img');p.classList.add('is-empty');this.remove();">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Caixa Ref. 6</h3>
+              <p class="product-card__sub">600 × 400 × 400 mm</p>
+              <p class="product-card__price">Preço sob consulta</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--dark">
+      <div class="container contact-quick">
+        <div class="contact-quick__text">
+          <p class="eyebrow eyebrow--light">Loja</p>
+          <h2>Precisa de material de embalamento?</h2>
+          <p>Contacte-nos para preços, quantidades e disponibilidade dos artigos.</p>
+        </div>
+        <ul class="contact-quick__list">
+          <li>
+            <span class="contact-quick__label">Telefone</span>
+            <a href="tel:+351915447559">+351 915 447 559</a>
+          </li>
+          <li>
+            <span class="contact-quick__label">Email</span>
+            <a href="mailto:geral@carreiraesilva.pt">geral@carreiraesilva.pt</a>
+          </li>
+          <li>
+            <span class="contact-quick__label">Morada</span>
+            <span>Rua João Reis, Lote 15 Unit D, Caldas da Rainha</span>
+          </li>
+        </ul>
+        <a href="contactos.html" class="btn btn-primary btn-large">Pedir orçamento</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <img src="img/ChatGPT_Image_16_06_2026__10_39_08-removebg-preview.png" class="logo-img" alt="" aria-hidden="true" width="44" height="44">
+        <p>Carreira &amp; Silva Grupo — CS Moving · CS Storage · CS Logistics &amp; Management</p>
+      </div>
+      <nav class="footer-nav" aria-label="Ligações rápidas">
+        <h3>Páginas</h3>
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="cs-moving.html">CS Moving</a></li>
+          <li><a href="cs-storage.html">CS Storage</a></li>
+          <li><a href="cs-logistics.html">CS Logistics</a></li>
+          <li><a href="loja.html">Materiais de Embalamento</a></li>
+          <li><a href="contactos.html">Contactos</a></li>
+        </ul>
+      </nav>
+      <div class="footer-legal">
+        <h3>Informações</h3>
+        <ul>
+          <li><a href="privacidade.html">Política de Privacidade</a></li>
+          <li><a href="termos.html">Termos e Condições</a></li>
+          <li class="footer-social">
+            <span class="footer-social__label">Redes Sociais</span>
+            <a href="https://www.instagram.com/carreira_silva/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</a>
+            <a href="https://www.facebook.com/CarreiraSilvaLda/?locale=pt_PT" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6v1.9h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg>Facebook</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; <span id="year"></span> Carreira &amp; Silva. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

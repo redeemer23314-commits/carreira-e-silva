@@ -1,0 +1,10 @@
+# Segredos — nunca enviar para o GitHub
+.env
+
+# Base de dados local
+*.db
+
+# Ambiente virtual
+venv/
+__pycache__/
+*.pyc
