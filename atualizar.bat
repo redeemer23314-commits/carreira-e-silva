@@ -7,6 +7,23 @@ echo   Atualizar site no GitHub - Carreira ^& Silva
 echo ============================================
 echo.
 
+REM Primeiro puxa o que possa haver de novo no GitHub (editado por outra maquina
+REM ou pela web). Fast-forward apenas -- se houver divergencia, para e avisa.
+echo A verificar se ha novidades no GitHub...
+git pull --ff-only
+if not %errorlevel%==0 (
+  echo.
+  echo ============================================
+  echo   Nao consegui puxar as novidades do GitHub.
+  echo   Ha alteracoes que colidem. Nao envio nada
+  echo   para nao apagar trabalho por engano.
+  echo ============================================
+  echo.
+  pause
+  exit /b
+)
+echo.
+
 REM Verifica se ha alteracoes (inclui ficheiros novos/nao rastreados)
 set "temmudancas="
 for /f "delims=" %%i in ('git status --porcelain') do set "temmudancas=1"
