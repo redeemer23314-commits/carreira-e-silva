@@ -676,8 +676,10 @@ h1, h2, h3, h4 {
   }
 }
 
-/* Navegação: colapsa para menu (hambúrguer) em tablets/telemóveis */
-@media (max-width: 900px) {
+/* Navegação: colapsa para menu (hambúrguer) em tablets/telemóveis.
+   1024px (não 900) porque o header ganhou o WhatsApp + CTA à direita e a
+   navegação horizontal deixa de caber em ecrãs médios antes disso. */
+@media (max-width: 1024px) {
   .nav-toggle {
     display: flex;
   }
@@ -848,9 +850,12 @@ h1, h2, h3, h4 {
   white-space: nowrap;
 }
 
-@media (max-width: 900px) {
-  /* No telemóvel: WhatsApp fica visível; o CTA em texto sai (o menu já dá tudo). */
+/* O CTA em texto sai mais cedo (≤1100) porque é o que ocupa mais largura;
+   o WhatsApp (círculo pequeno) fica sempre visível, incluindo no telemóvel. */
+@media (max-width: 1100px) {
   .header-cta { display: none; }
+}
+@media (max-width: 1024px) {
   .lang-switch { margin-left: auto; }
   .header-actions { margin-left: 10px; }
 }
