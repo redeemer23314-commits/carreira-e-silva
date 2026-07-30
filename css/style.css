@@ -844,11 +844,14 @@ h1, h2, h3, h4 {
 }
 .header-wa:hover { filter: brightness(1.06); transform: translateY(-1px); }
 .header-wa svg { width: 20px; height: 20px; }
+/* Ordem visual: botão CTA primeiro, WhatsApp à direita dele. */
 .header-cta {
+  order: 1;
   padding: 9px 18px;
   font-size: 0.9rem;
   white-space: nowrap;
 }
+.header-wa { order: 2; }
 
 /* O CTA em texto sai mais cedo (≤1100) porque é o que ocupa mais largura;
    o WhatsApp (círculo pequeno) fica sempre visível, incluindo no telemóvel. */
