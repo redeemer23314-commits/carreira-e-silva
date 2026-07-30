@@ -164,8 +164,10 @@ h1, h2, h3, h4 {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(8px);
+  /* Branco opaco (não translúcido): os ícones das divisões têm fundo branco,
+     e com o header semi-transparente apareciam uns quadrados brancos ao fazer
+     scroll sobre conteúdo escuro. Opaco resolve e melhora a legibilidade. */
+  background: #fff;
   border-bottom: 1px solid var(--color-border);
 }
 
